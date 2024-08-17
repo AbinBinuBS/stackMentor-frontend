@@ -28,30 +28,76 @@ export const MentorsignupValidation = Yup.object({
   });
 
 
+  const allowedFileTypes: string[] = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
+  
+  const fileValidation = Yup.mixed<File>()
+  .required('File is required')
+  .test('fileType', 'Unsupported file format', (value) => {
+    if (value && value instanceof File) {
+      return allowedFileTypes.includes(value.type);
+    }
+    return false;
+  })
+  .test('fileSize', 'File size is too large', (value) => {
+    if (value && value instanceof File) {
+      return value.size <= 5 * 1024 * 1024; 
+    }
+    return false;
+  }); 
+
+const MIN_DATE = new Date();
+MIN_DATE.setFullYear(MIN_DATE.getFullYear() - 21);
 
 
 
 export const mentorVerifyValidation = [
     Yup.object().shape({
-        name: Yup.string().required('Required'), 
-        dateOfBirth: Yup.date().required('Required').max(new Date(), 'Invalid'),
-        preferredLanguage: Yup.string().required('Required'),
-        email: Yup.string().email('Invalid email').required('Required'),
+      name: Yup.string()
+      .trim()
+      .required('Required'),
+      dateOfBirth: Yup.date().required('Required').max(new Date(), 'Invalid'),
+      preferredLanguage: Yup.string()
+      .trim()
+      .required('Required'),
+      email: Yup.string()
+      .trim()
+      .email('Please enter a valid email')
+      .required('Please enter your email'),
     }),
     Yup.object().shape({
-        degree: Yup.string().required('Required'), 
-        college: Yup.string().required('Required'),
-        yearOfGraduation: Yup.number().required('Required').min(1900, 'Invalid').max(new Date().getFullYear(), 'Invalid'),
+        degree: Yup.string()
+        .trim()
+        .required('Required'), 
+        college: Yup.string()
+        .trim()
+        .required('Required'),
+        yearOfGraduation: Yup.number()
+        .required('Required')
+        .min(1900, 'Invalid')
+        .max(new Date()
+        .getFullYear(), 'Invalid'),
     }),
     Yup.object().shape({
-        jobTitle: Yup.string().required('Required'), 
-        lastWorkedCompany: Yup.string().required('Required'),
-        yearsOfExperience: Yup.number().required('Required').min(0, 'Invalid'), 
-        stack: Yup.string().required('Required'),
+        jobTitle: Yup.string()
+        .trim()
+        .required('Required'), 
+        lastWorkedCompany: Yup.string()
+        .trim()
+        .required('Required'),
+        yearsOfExperience: Yup.number()
+        .required('Required')
+        .min(0, 'Invalid'), 
+        stack: Yup.string()
+        .trim()
+        .required('Required'),
     }),
     Yup.object().shape({
-        resume: Yup.mixed().required('Required'),
-        degreeCertificate: Yup.mixed().required('Required'),
-        experienceCertificate: Yup.mixed().required('Required'),
+        resume: fileValidation,
+        degreeCertificate:fileValidation,
+        experienceCertificate: fileValidation,
     }),
 ];

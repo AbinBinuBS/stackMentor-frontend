@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { LOCALHOST_URL } from '../../../constants/constants';
 import { mentorVerifyValidation } from '../../../validations/mentorValidation';
 import { MentorVerifyFormValues } from '../../../interfaces/mentorInterfaces';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
 const MentorVerifyBody: React.FC = () => {
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
+    const { accessToken } = useSelector((state: RootState) => state.mentor);
 
     const initialValues: MentorVerifyFormValues = {
         name: '', dateOfBirth: '', preferredLanguage: '', email: '',
@@ -30,35 +33,44 @@ const MentorVerifyBody: React.FC = () => {
                     formData.append(key, value as Blob | string);
                 }
             });
-
-            // Debugging log to check formData content
+    
             for (let pair of formData.entries()) {
                 console.log(`${pair[0]}: ${pair[1]}`);
             }
-
+    
             try {
-                const response = await axios.post(`${LOCALHOST_URL}/api/mentor/verify-mentor`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
+                const config: AxiosRequestConfig = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${accessToken}` 
+                    },
+                };
+    
+                const response = await axios.post(
+                    `${LOCALHOST_URL}/api/mentor/verify-mentor`,
+                    formData,
+                    config
+                );
                 
-                // Debugging log to check the response
                 console.log('Response:', response);
-
-                if (response.data.message === 'Success') {
-                    toast.success('Verification submitted successfully.');
-                    navigate('/mentor/dashboard');
+    
+                if (response.data.message === 'Verification complete') {
+                    toast.success(response.data.message  || 'Verification submitted successfully.');
+                    navigate('/mentor/');
                 } else {
                     toast.error(response.data.message || 'An error occurred. Please try again.');
                 }
             } catch (error: any) {
-                toast.error('An unexpected error occurred. Please try again.');
                 console.error('Error during submission:', error);
+                const errorMessage = error.response?.data?.message || 'An unexpected error occurred. Please try again.';
+                toast.error(errorMessage);
             } finally {
                 setLoading(false);
                 setSubmitting(false);
             }
         }
     };
+    
 
     const renderInputField = (name: string, label: string, type: string = 'text') => (
         <div className="mb-2">

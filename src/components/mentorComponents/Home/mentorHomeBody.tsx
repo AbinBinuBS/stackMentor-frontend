@@ -1,6 +1,27 @@
 import React from 'react';
+import apiClient from '../../../services/apiClient';
+import { LOCALHOST_URL } from '../../../constants/constants';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const MentorHomeBody: React.FC = () => {
+    const navigate = useNavigate()
+    const handleVerifyAccountClick = async () => {
+        try{
+            const response = await apiClient.get(`${LOCALHOST_URL}/api/mentor/checkVerify`)
+            if(response.data.message == "Mentor is a biginner."){
+                navigate('/mentor/verify')
+            }else if(response.data.message == "Mentor is a applied." || "Mentor is a verified." || "Mentor is a rejected." ){
+                navigate('/mentor/success')
+            }
+            toast.success("success")
+        }catch(error){
+            if(error instanceof Error){
+                toast.error(error.message || "something went wrong, please try again after sometime.")
+            }
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col lg:flex-row-reverse items-center justify-between w-full h-[300px] lg:h-[400px] my-10 bg-purple-50 p-6 lg:p-12 text-purple-800 font-sans">
@@ -25,10 +46,13 @@ const MentorHomeBody: React.FC = () => {
                     <i className="fa-solid fa-handshake text-4xl mx-4 text-purple-800"></i>
                     <h2 className="text-xl text-purple-900">Resolve Questions</h2>
                 </a>
-                <a href="/mentor/verify" className="w-full lg:w-80 h-44 bg-purple-100 flex items-center justify-center rounded-lg shadow-md">
+                <button 
+                    onClick={handleVerifyAccountClick}
+                    className="w-full lg:w-80 h-44 bg-purple-100 flex items-center justify-center rounded-lg shadow-md"
+                >
                     <i className="fa-solid fa-rocket text-4xl mx-4 text-purple-800"></i>
                     <h2 className="text-xl text-purple-900">Verify Account</h2>
-                </a>
+                </button>
             </div>
             <div className="flex flex-col lg:flex-row items-center justify-between w-full h-auto my-16 p-6 lg:p-12 bg-purple-50 rounded-lg">
                 <div className="flex-1 lg:w-1/2 px-4 lg:px-8">
