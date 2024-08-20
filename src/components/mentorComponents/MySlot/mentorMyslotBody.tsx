@@ -1,31 +1,187 @@
+import React, { useEffect, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import toast from "react-hot-toast";
+import apiClient from "../../../services/apiClient";
+import { LOCALHOST_URL } from "../../../constants/constants";
+import { format, parseISO, isSameDay } from "date-fns";
+import Swal from "sweetalert2";
 
-const MentorMySlotBody = () => {
-  return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="flex flex-col justify-between w-[900px] h-[200px] bg-white p-6 rounded-lg shadow-lg">
-        <div className="flex justify-between">
-          <div className="text-lg font-semibold">Date</div>
-          <div className="text-gray-600">2024-08-15</div>
-        </div>
-        <div className="flex justify-between">
-          <div className="text-lg font-semibold">Start Time</div>
-          <div className="text-gray-600">10:00 AM</div>
-        </div>
-        <div className="flex justify-between">
-          <div className="text-lg font-semibold">End Time</div>
-          <div className="text-gray-600">11:00 AM</div>
-        </div>
-        <div className="flex justify-end space-x-4 mt-4">
-          <button className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600">
-            Reschedule
-          </button>
-          <button className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600">
-            Remove
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+interface Slot {
+	_id: string;
+	date: string;
+	startTime: string;
+	endTime: string;
+}
+
+const MentorMySlotBody: React.FC = () => {
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+	const [slots, setSlots] = useState<Slot[]>([]);
+	const slotsPerPage = 6;
+
+	useEffect(() => {
+		const getSlots = async () => {
+			try {
+				const response = await apiClient.get(
+					`${LOCALHOST_URL}/api/mentor/getSlots`
+				);
+				if (response.data.message === "Slots sent successfully") {
+          console.log("4444444444444444444",response.data.sloteData)
+					setSlots(response.data.sloteData || []);
+				} else {
+					toast.error("Failed to fetch slots: " + response.data.message);
+				}
+			} catch (error) {
+				if (error instanceof Error) {
+					toast.error(error.message);
+				} else {
+					toast.error("Something went wrong, Please try again.");
+				}
+			}
+		};
+
+		getSlots();
+	}, []);
+
+	const formattedDate = (date: string) =>
+		format(parseISO(date), "MMMM d, yyyy");
+	const formattedStartTime = (time: string) =>
+		format(new Date(`1970-01-01T${time}:00`), "h:mm a");
+	const formattedEndTime = (time: string) =>
+		format(new Date(`1970-01-01T${time}:00`), "h:mm a");
+
+	const filteredSlots = selectedDate
+		? slots.filter((slot) => {
+				const slotDate = parseISO(slot.date);
+				return isSameDay(slotDate, selectedDate);
+		  })
+		: slots;
+
+	const indexOfLastSlot = currentPage * slotsPerPage;
+	const indexOfFirstSlot = indexOfLastSlot - slotsPerPage;
+	const currentSlots = filteredSlots.slice(indexOfFirstSlot, indexOfLastSlot);
+	const totalPages = Math.ceil(filteredSlots.length / slotsPerPage);
+
+	const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+	const handleDateChange = (date: Date | null) => {
+		setSelectedDate(date);
+		setCurrentPage(1); 
+	};
+
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'You want to delete this slot.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const response = await apiClient.delete(`${LOCALHOST_URL}/api/mentor/deleteSlot/${id}`);
+            if (response.data.message === 'Slots deleted successfully') {
+                toast.success('Slot removed successfully');
+                setSlots(prevSlots => prevSlots.filter(slot => slot._id !== id));
+            } else {
+                toast.error('Failed to delete slot: ' + response.data.message);
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error('Something went wrong, Please try again.');
+            }
+        }
+    }
+};
+
+  
+  
+
+	return (
+		<div className="flex ml-16 flex-col justify-center items-center min-h-screen bg-gray-100 p-6">
+			<div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg">
+				<h2 className="text-2xl font-bold mb-4">Mentoring Slots</h2>
+				<div className="mb-6">
+					<DatePicker
+						selected={selectedDate}
+						onChange={handleDateChange}
+						dateFormat="yyyy-MM-dd"
+						className="p-2 border border-gray-300 rounded"
+						placeholderText="Select a date"
+					/>
+				</div>
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					{currentSlots.length > 0 ? (
+						currentSlots.map((slot) => (
+							<div
+								key={slot._id}
+								className="bg-purple-100 p-4 rounded-lg shadow-sm"
+							>
+								<h3 className="text-lg font-semibold mb-2">
+									Date: {formattedDate(slot.date)}
+								</h3>
+								<p className="text-gray-600">
+									Start: {formattedStartTime(slot.startTime)}
+								</p>
+								<p className="text-gray-600">
+									End: {formattedEndTime(slot.endTime)}
+								</p>
+								<div className="mt-2 space-x-2">
+									<button className="px-2 py-1 bg-purple-500 text-white rounded-full hover:bg-purple-600 text-sm">
+										Reschedule
+									</button>
+									<button
+										onClick={() => handleDelete(slot._id)}
+										className="px-2 py-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-sm"
+									>
+										Remove
+									</button>
+								</div>
+							</div>
+						))
+					) : (
+						<p className="text-center text-gray-500">
+							No slots available for the selected date.
+						</p>
+					)}
+				</div>
+				<div className="flex justify-center mt-6">
+					<button
+						onClick={() => paginate(currentPage - 1)}
+						disabled={currentPage === 1}
+						className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 text-gray-700"
+					>
+						Previous
+					</button>
+					{Array.from({ length: totalPages }, (_, i) => (
+						<button
+							key={i}
+							onClick={() => paginate(i + 1)}
+							className={`mx-1 px-3 py-1 rounded ${
+								currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+							}`}
+						>
+							{i + 1}
+						</button>
+					))}
+					<button
+						onClick={() => paginate(currentPage + 1)}
+						disabled={currentPage === totalPages}
+						className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 text-gray-700"
+					>
+						Next
+					</button>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default MentorMySlotBody;

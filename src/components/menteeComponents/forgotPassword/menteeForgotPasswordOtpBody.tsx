@@ -97,7 +97,6 @@ const MenteeForgotPasswordOtpBody: React.FC = () => {
             otp: otpString,
         });
 
-        // Ensure correct response handling
         if (response.data.message === 'OTP verified successfully') {
             localStorage.removeItem('otpStartTime');
             localStorage.removeItem('isTimerActive');

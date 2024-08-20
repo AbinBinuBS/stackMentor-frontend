@@ -8,7 +8,8 @@ export default {
     extend: {
       colors: {
         'custom-cyan': '#CEF6F6',
-        'custom-light-blue': '#CBE0F9'
+        'custom-light-blue': '#CBE0F9',
+        'custom-cyan1': 'rgb(59, 130, 246 / 0.5)'
       },
     },
   },

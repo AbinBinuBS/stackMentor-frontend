@@ -101,3 +101,46 @@ export const mentorVerifyValidation = [
         experienceCertificate: fileValidation,
     }),
 ];
+
+
+
+
+export const timeSheduleValidation = Yup.object({
+  date: Yup.string()
+    .required('Date is required')
+    .test('is-future-date', "You can only shedule date from tomorrow's date", (value) => {
+      if (!value) return false;
+      const inputDate = new Date(value);
+      const today = new Date();
+      today.setDate(today.getDate() );
+      return inputDate >= today;
+    }),
+  startTime: Yup.string()
+    .required('Start time is required')
+    .test('is-valid-time', 'Start time must be earlier than end time', function (startTime) {
+      const { endTime } = this.parent;
+      if (!startTime || !endTime) return true; 
+      return startTime < endTime;
+    }),
+  endTime: Yup.string().required('End time is required'),
+  price: Yup.number()
+    .required('Price is required')
+    .positive('Price must be positive')
+    .test('is-indian-currency', 'Price must be in Indian currency format', (value) => {
+      if (!value) return false;
+      const currencyFormat = /^[1-9]\d*(\.\d{1,2})?$/; 
+      return currencyFormat.test(value.toString());
+    }),
+  category: Yup.string().required('Category is required'),
+  about: Yup.string()
+    .required('About section is required')
+    .min(10, 'Must be at least 10 characters'),
+  image: Yup.mixed()
+    .required('Image is required')
+    .test('is-image', 'Only image files are allowed', (value) => {
+      if (!value) return false;
+      const file = value as File;
+      return file && file.type.startsWith('image/'); 
+    }),
+});
+

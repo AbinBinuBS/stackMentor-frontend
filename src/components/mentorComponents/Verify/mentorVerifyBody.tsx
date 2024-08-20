@@ -8,13 +8,14 @@ import { mentorVerifyValidation } from '../../../validations/mentorValidation';
 import { MentorVerifyFormValues } from '../../../interfaces/mentorInterfaces';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
+import MentorVerifySuccessBody from './mentorVerifySuccessBody';
 
 const MentorVerifyBody: React.FC = () => {
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const { accessToken } = useSelector((state: RootState) => state.mentor);
-
+    const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const initialValues: MentorVerifyFormValues = {
         name: '', dateOfBirth: '', preferredLanguage: '', email: '',
         degree: '', college: '', yearOfGraduation: '', jobTitle: '', lastWorkedCompany: '',
@@ -50,13 +51,10 @@ const MentorVerifyBody: React.FC = () => {
                     `${LOCALHOST_URL}/api/mentor/verify-mentor`,
                     formData,
                     config
-                );
-                
-                console.log('Response:', response);
-    
+                );    
                 if (response.data.message === 'Verification complete') {
                     toast.success(response.data.message  || 'Verification submitted successfully.');
-                    navigate('/mentor/');
+                    setIsSuccess(true)
                 } else {
                     toast.error(response.data.message || 'An error occurred. Please try again.');
                 }
@@ -70,7 +68,9 @@ const MentorVerifyBody: React.FC = () => {
             }
         }
     };
-    
+    if(isSuccess){
+        return <MentorVerifySuccessBody mentorData={"applied"}/>
+    }
 
     const renderInputField = (name: string, label: string, type: string = 'text') => (
         <div className="mb-2">

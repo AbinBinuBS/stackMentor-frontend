@@ -91,7 +91,7 @@ const AdminLoginBody: React.FC = () => {
                         <button
                             type="submit"
                             className={`w-full py-2 rounded-md text-black font-bold transition-colors ${
-                                loading ? 'bg-gray-400' : 'bg-blue-100 hover:bg-blue-300'
+                                loading ? 'bg-gray-400' : 'bg-purple-400 hover:bg-purple-600'
                             }`}
                             disabled={loading}
                         >

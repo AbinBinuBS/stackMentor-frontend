@@ -4,7 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { LOCALHOST_URL } from '../../../constants/constants';
-import { forgotPasswordValidation } from '../../../validations/commonValidation'; // Assuming you have a validation schema for forgot password
+import { forgotPasswordValidation } from '../../../validations/commonValidation'; 
 
 const MentorForgotPasswordEmailBody: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -19,9 +19,9 @@ const MentorForgotPasswordEmailBody: React.FC = () => {
             setLoading(true);
             try {
                 const response = await axios.post(`${LOCALHOST_URL}/api/mentor/forgot-password`, values);
-                if (response.data.message === 'Email sent successfully') {
-                    toast.success('Password reset link sent to your email.');
-                    navigate('/mentor/login');
+                if (response.data.message === 'Password reset link sent to your email.') {
+                    toast.success('Otp send successfully.');
+                    navigate(`/mentor/forgot-password-otp?email=${encodeURIComponent(values.email)}`);
                 } else {
                     toast.error(response.data.message || 'Failed to send password reset link.');
                 }

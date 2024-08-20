@@ -111,13 +111,13 @@ const MentorForgotPasswordBody: React.FC = () => {
         setLoading(true);
         try {
             const otpString = otp.join('');
-            const response = await axios.post(`${LOCALHOST_URL}/api/mentor/verify-otp`, {
+            const response = await axios.post(`${LOCALHOST_URL}/api/mentor/reset-password-verify-otp`, {
                 email,
                 otp: otpString,
             });
             if (response.data.message === 'OTP verified successfully') {
                 toast.success(response.data.message);
-                navigate('/mentor/reset-password'); // Redirect to reset password page
+                navigate('/mentor/reset-password'); 
             } else {
                 toast.error(response.data.message || 'Please enter a valid OTP');
             }

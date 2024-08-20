@@ -1,7 +1,7 @@
 const AdminSidebar = () => {
     return (
-        <div className="flex items-center justify-end h-screen w-2/5 bg-blue-100">
-            <div className="relative flex flex-col items-center justify-center bg-blue-100 w-4/5 h-4/5 shadow-2xl rounded-lg p-6">
+        <div className="flex items-center justify-end h-screen w-2/5 bg-purple-300">
+            <div className="relative flex flex-col items-center justify-center bg-purple-300 w-4/5 h-4/5 shadow-2xl rounded-lg p-6">
                 <div className="relative">
                     <img src="/images/logo.png" alt="logo" className="w-80 h-auto mx-auto" />
                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-center w-full px-4 pt-4">
