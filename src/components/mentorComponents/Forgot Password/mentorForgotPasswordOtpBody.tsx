@@ -117,7 +117,7 @@ const MentorForgotPasswordBody: React.FC = () => {
             });
             if (response.data.message === 'OTP verified successfully') {
                 toast.success(response.data.message);
-                navigate('/mentor/reset-password'); 
+                navigate(`/mentor/forgot-password-reset?email=${encodeURIComponent(response.data.email)}`); 
             } else {
                 toast.error(response.data.message || 'Please enter a valid OTP');
             }
@@ -156,7 +156,7 @@ const MentorForgotPasswordBody: React.FC = () => {
                         </div>
                         <button
                             type="submit"
-                            className={`w-full py-2 px-4 ${!isButtonEnabled || loading ? 'bg-gray-300 cursor-not-allowed' : 'bg-custom-cyan hover:bg-cyan-200'} text-white rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+                            className={`w-full py-2 px-4 ${!isButtonEnabled || loading ? 'bg-gray-300 cursor-not-allowed' : 'bg-purple-400 hover:bg-purple-600'} text-white rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                             disabled={!isButtonEnabled || loading}
                         >
                             {loading ? 'Verifying...' : 'Verify OTP'}

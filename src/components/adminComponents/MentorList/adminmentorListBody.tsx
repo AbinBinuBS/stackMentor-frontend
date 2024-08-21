@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import Swal from 'sweetalert2'; 
 import { useNavigate } from 'react-router-dom';
+import apiClientAdmin from '../../../services/apiClientAdmin';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -28,19 +29,23 @@ const AdminMentorListBody: React.FC = () => {
   const fetchMentorList = async () => {
     setLoading(true); 
     try {
-      const response = await axios.post(`${LOCALHOST_URL}/api/admin/getMentor`, { status: "applied" });
+      const response = await apiClientAdmin.post(`${LOCALHOST_URL}/api/admin/getMentor`, { status: "applied" });
+    
       if (response.data.message === "Success") {
         setMentors(response.data.mentorData || []);
       } else {
         toast.error(response.data.message || "Something went wrong, please try again later.");
       }
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message || "Something went wrong, please try again later.");
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Request failed, please try again later.");
+      } else if (error instanceof Error) {
+        toast.error(error.message || "An unexpected error occurred, please try again later.");
       }
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
+    
   };
 
   const totalPages = Math.ceil((mentors.length || 0) / ITEMS_PER_PAGE);
@@ -63,12 +68,15 @@ const AdminMentorListBody: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        const response = await axios.put(`${LOCALHOST_URL}/api/admin/blockMentor`, {
+        const response = await apiClientAdmin.put(`${LOCALHOST_URL}/api/admin/blockMentor`, {
           id,
-          isActive
+          isActive,
         });
-
-        if (response.data.message === 'Mentor blocked successfully.' || response.data.message === 'Mentor unblocked successfully.') {
+      
+        if (
+          response.status === 200 &&
+          (response.data.message === 'Mentor blocked successfully.' || response.data.message === 'Mentor unblocked successfully.')
+        ) {
           setMentors((prevMentors) =>
             prevMentors.map((mentor) =>
               mentor._id === id ? { ...mentor, isActive: !isActive } : mentor
@@ -79,10 +87,13 @@ const AdminMentorListBody: React.FC = () => {
           toast.error(response.data.message || 'Failed to update mentor status.');
         }
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message || 'Unknown error occurred, please try again later.');
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data?.message || 'Request failed, please try again later.');
+        } else if (error instanceof Error) {
+          toast.error(error.message || 'An unexpected error occurred, please try again later.');
         }
       }
+      
     }
   };
 

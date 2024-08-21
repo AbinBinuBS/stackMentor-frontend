@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { LOCALHOST_URL } from '../../../constants/constants';
+import apiClientAdmin from '../../../services/apiClientAdmin';
 
 interface IMentorDetails {
   name: string;
@@ -40,21 +41,24 @@ const AdminMentorDetailsBody: React.FC = () => {
   useEffect(() => {
     const getMentorDetails = async () => {
       try {
-        const response = await axios.get(`${LOCALHOST_URL}/api/admin/getMentorDetails`, {
-          params: { id: id }
+        const response = await apiClientAdmin.get(`${LOCALHOST_URL}/api/admin/getMentorDetails`, {
+          params: { id }
         });
-
-        if (response.data.message === "Success") {
+      
+        if (response.status === 200 && response.data.message === "Success") {
           setMentorDetails(response.data.mentorData);
           setVerificationStatus(response.data.mentorData.isVerified ? 'verified' : 'pending');
         } else {
-          toast.error(response.data.message || 'Unknown error occurred, please try again later.');
+          toast.error(response.data.message || 'Failed to retrieve mentor details.');
         }
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message || 'Unknown error occurred, please try again later.');
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data?.message || 'Request failed, please try again later.');
+        } else if (error instanceof Error) {
+          toast.error(error.message || 'An unexpected error occurred, please try again later.');
         }
       }
+      
     };
 
     if (id) {
@@ -91,32 +95,37 @@ const AdminMentorDetailsBody: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post(`${LOCALHOST_URL}/api/admin/updateMentorStatus`, {
-        id: id,
+      // Update mentor status
+      const updateResponse = await apiClientAdmin.post(`${LOCALHOST_URL}/api/admin/updateMentorStatus`, {
+        id,
         status: verificationStatus
       });
-
-      if (response.data.message === "Status updated successfully.") {
-        toast.success(response.data.message || 'Mentor status updated successfully.');
+    
+      if (updateResponse.status === 200 && updateResponse.data.message === "Status updated successfully.") {
+        toast.success('Mentor status updated successfully.');
         setStatusUpdated(true);
-        // Fetch updated mentor details
-        const updatedResponse = await axios.get(`${LOCALHOST_URL}/api/admin/getMentorDetails`, {
-          params: { id: id }
+    
+        const updatedResponse = await apiClientAdmin.get(`${LOCALHOST_URL}/api/admin/getMentorDetails`, {
+          params: { id }
         });
-        if (updatedResponse.data.message === "Success") {
+    
+        if (updatedResponse.status === 200 && updatedResponse.data.message === "Success") {
           setMentorDetails(updatedResponse.data.mentorData);
           setVerificationStatus(updatedResponse.data.mentorData.isVerified ? 'verified' : 'pending');
         } else {
           toast.error(updatedResponse.data.message || 'Error fetching updated details.');
         }
       } else {
-        toast.error(response.data.message || 'Unknown error occurred, please try again later.');
+        toast.error(updateResponse.data.message || 'Failed to update mentor status.');
       }
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message || 'Unknown error occurred, please try again later.');
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || 'Request failed, please try again later.');
+      } else if (error instanceof Error) {
+        toast.error(error.message || 'An unexpected error occurred, please try again later.');
       }
     }
+    
   };
 
   const renderStatusOptions = () => {

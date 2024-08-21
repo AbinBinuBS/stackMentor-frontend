@@ -27,14 +27,17 @@ const MentorMySlotBody: React.FC = () => {
 					`${LOCALHOST_URL}/api/mentor/getSlots`
 				);
 				if (response.data.message === "Slots sent successfully") {
-          console.log("4444444444444444444",response.data.sloteData)
 					setSlots(response.data.sloteData || []);
 				} else {
 					toast.error("Failed to fetch slots: " + response.data.message);
 				}
 			} catch (error) {
 				if (error instanceof Error) {
-					toast.error(error.message);
+					if(error.message == "Request failed with status code 403"){
+						toast.error("Mentor should be verified.")
+					  }else{
+						toast.error(error.message);
+					}
 				} else {
 					toast.error("Something went wrong, Please try again.");
 				}
@@ -93,7 +96,11 @@ const MentorMySlotBody: React.FC = () => {
             }
         } catch (error) {
             if (error instanceof Error) {
-                toast.error(error.message);
+				if(error.message == "Request failed with status code 403"){
+					toast.error("Mentor should be verified.")
+				  }else{
+					toast.error(error.message);
+				}
             } else {
                 toast.error('Something went wrong, Please try again.');
             }

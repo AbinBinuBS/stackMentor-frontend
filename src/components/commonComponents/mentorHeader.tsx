@@ -52,7 +52,7 @@ const MentorHeader: React.FC = () => {
     }}
   >
     <div className="flex items-center justify-between">
-      <img src="/images/logo.png" alt="Logo" className="h-16" /> 
+      <img src="/images/commonLogo.png" alt="Logo" className="h-16" /> 
       <nav className="flex items-center space-x-8">
           <button
             onClick={() => navigate('/mentor/home')}

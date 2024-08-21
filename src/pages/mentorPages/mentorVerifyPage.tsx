@@ -8,17 +8,15 @@ import apiClient from "../../services/apiClient";
 import { LOCALHOST_URL } from "../../constants/constants";
 
 const MentorVerifyPage = () => {
-  const [mentorData, setMentorData] = useState(""); // State to store mentor status
-  const [loading, setLoading] = useState(true); // Loading state
+  const [mentorData, setMentorData] = useState(""); 
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const verificationStatus = async () => {
       try {
-        console.log("1111111111111111111111111")
         const response = await apiClient.get(`${LOCALHOST_URL}/api/mentor/checkVerify`);
         const status = response.data.mentorData;
-        console.log("11111111111111111111111111",mentorData)
         if (status === "beginner") { 
           setMentorData("beginner"); 
         } else if (["applied", "verified", "rejected"].includes(status)) {
@@ -29,7 +27,11 @@ const MentorVerifyPage = () => {
         }
       } catch (error) {
         if (error instanceof Error) {
-          toast.error(error.message);
+          if(error.message == "Request failed with status code 403"){
+            toast.error("Session has been lost.")
+          }else{
+            toast.error(error.message);
+          }
         }
       } finally {
         setLoading(false);

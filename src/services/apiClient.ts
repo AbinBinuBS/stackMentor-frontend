@@ -27,6 +27,17 @@ apiClient.interceptors.response.use(
     response => response,
     async error => {
         const originalRequest = error.config;
+        if (error.response && error.response.status === 403) {
+            const errorCode = error.response.data.code;
+
+            if (errorCode === 'ACCOUNT_INACTIVE') {
+                store.dispatch(mentorLogout());
+                return Promise.reject(new Error('Your account is inactive. Please contact support.'));
+            } else if (errorCode === 'NOT_VERIFIED') {
+                return Promise.reject(new Error('Mentor is not verified. Please complete the verification process.'));
+            }
+        }
+
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             const state = store.getState();
@@ -34,14 +45,12 @@ apiClient.interceptors.response.use(
 
             if (refreshToken) {
                 try {
-                    console.log("reacher here")
                     const { data } = await apiClient.post('/auth/refresh-token', { refreshToken });
-                    console.log(data)
                     store.dispatch(mentorLogin({ accessToken: data.accessToken, refreshToken: data.refreshToken }));
                     originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
                     return apiClient(originalRequest);
                 } catch (refreshError) {
-                    console.error('Token refresh failed:', refreshError);
+                    console.error('Session has been expired', refreshError);
                     store.dispatch(mentorLogout());
                 }
             } else {
@@ -51,5 +60,6 @@ apiClient.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
 
 export default apiClient;

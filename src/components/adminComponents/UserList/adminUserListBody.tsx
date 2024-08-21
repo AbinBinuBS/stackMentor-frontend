@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import Swal from 'sweetalert2'; 
 import { useNavigate } from 'react-router-dom';
+import apiClientAdmin from '../../../services/apiClientAdmin';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -28,19 +29,25 @@ const AdminUserListBody: React.FC = () => {
   const fetchUserList = async () => {
     setLoading(true); 
     try {
-      const response = await axios.post(`${LOCALHOST_URL}/api/admin/getUser`, { status: "applied" });
-      if (response.data.message === "Success") {
-        setUsers(response.data.userData || []);
+      setLoading(true);
+    
+      const response = await apiClientAdmin.post(`${LOCALHOST_URL}/api/admin/getUser`, { status: "applied" });
+      
+      if (response.status === 200 && response.data.message === "Success") {
+        setUsers(response.data.userData || []); 
       } else {
         toast.error(response.data.message || "Something went wrong, please try again later.");
       }
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message || "Something went wrong, please try again later.");
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Request failed, please try again later.");
+      } else if (error instanceof Error) {
+        toast.error(error.message || "An unexpected error occurred, please try again later.");
       }
     } finally {
       setLoading(false); 
     }
+    
   };
 
   const totalPages = Math.ceil((users.length || 0) / ITEMS_PER_PAGE);
@@ -63,12 +70,14 @@ const AdminUserListBody: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        const response = await axios.put(`${LOCALHOST_URL}/api/admin/blockUser`, {
+        const response = await apiClientAdmin.put(`${LOCALHOST_URL}/api/admin/blockUser`, {
           id,
-          isActive
+          isActive,
         });
-
-        if (response.data.message === 'User blocked successfully.' || response.data.message === 'User unblocked successfully.') {
+        if (
+          response.status === 200 &&
+          (response.data.message === 'User blocked successfully.' || response.data.message === 'User unblocked successfully.')
+        ) {
           setUsers((prevUsers) =>
             prevUsers.map((user) =>
               user._id === id ? { ...user, isActive: !isActive } : user
@@ -79,10 +88,14 @@ const AdminUserListBody: React.FC = () => {
           toast.error(response.data.message || 'Failed to update user status.');
         }
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message || 'Unknown error occurred, please try again later.');
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data?.message || 'Request failed, please try again later.');
+        } else if (error instanceof Error) {
+          toast.error(error.message || 'An unexpected error occurred, please try again later.');
         }
       }
+      
+      
     }
   };
 

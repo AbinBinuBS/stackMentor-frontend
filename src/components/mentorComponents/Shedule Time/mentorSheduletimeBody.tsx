@@ -49,8 +49,12 @@ const MentorSheduleTimeBody = () => {
         if (error instanceof Error) {
           if(error.message == "The time slot can't  be booked because you already booked time on the provided time."){
             toast.error("The time slot can't  be booked because you already booked time on the provided time.");
+          }else if(error.message == "Request failed with status code 403"){
+            toast.error("Mentor should be verified.")
+          }else{
+            console.log("1111111111111")
+            toast.error("The time slot can't  be booked because you already booked time on the provided time." || error.message);
           }
-          toast.error("An unexpected error has occurred. Please try again.");
         } else {
           toast.error("An unexpected error has occurred. Please try again.");
         }

@@ -27,8 +27,7 @@ const MentorForgotPasswordEmailBody: React.FC = () => {
                 }
             } catch (error: any) {
                 if (axios.isAxiosError(error)) {
-                    const message = error.response?.data?.message;
-                    toast.error(message || 'An unexpected error occurred. Please try again.');
+                    toast.error('There is no account with this email.');
                 } else {
                     toast.error('An unexpected error occurred. Please try again.');
                 }

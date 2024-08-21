@@ -21,13 +21,13 @@ const MentorForgotPasswordResetBody: React.FC = () => {
         onSubmit: async (values) => {
             setLoading(true);
             try {
-                const response = await axios.post(`${LOCALHOST_URL}/api/mentors/reset-password-reset`, {
+                const response = await axios.post(`${LOCALHOST_URL}/api/mentor/reset-password-reset`, {
                     email,
                     newPassword: values.newPassword,
                 });
                 if (response.data.message === "Success") {
                     toast.success("Password changed successfully.");
-                    navigate('/login');
+                    navigate('/mentor');
                 } else {
                     toast.error(response.data.message || 'Failed to reset password');
                 }
