@@ -31,77 +31,77 @@ export const MentorsignupValidation = Yup.object({
   const allowedFileTypes: string[] = [
     'application/pdf',
     'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'image/jpeg',
+    'image/png'
   ];
   
   const fileValidation = Yup.mixed<File>()
-  .required('File is required')
-  .test('fileType', 'Unsupported file format', (value) => {
-    if (value && value instanceof File) {
-      return allowedFileTypes.includes(value.type);
-    }
-    return false;
-  })
-  .test('fileSize', 'File size is too large', (value) => {
-    if (value && value instanceof File) {
-      return value.size <= 5 * 1024 * 1024; 
-    }
-    return false;
-  }); 
-
-const MIN_DATE = new Date();
-MIN_DATE.setFullYear(MIN_DATE.getFullYear() - 21);
-
-
-
-export const mentorVerifyValidation = [
+    .required('File is required')
+    .test('fileType', 'Unsupported file format', (value) => {
+      if (value && value instanceof File) {
+        return allowedFileTypes.includes(value.type);
+      }
+      return false;
+    })
+    .test('fileSize', 'File size is too large', (value) => {
+      if (value && value instanceof File) {
+        return value.size <= 5 * 1024 * 1024; // 5MB
+      }
+      return false;
+    });
+  
+  const MIN_DATE = new Date();
+  MIN_DATE.setFullYear(MIN_DATE.getFullYear() - 21);
+  
+  export const mentorVerifyValidation = [
     Yup.object().shape({
       name: Yup.string()
-      .trim()
-      .required('Required'),
-      dateOfBirth: Yup.date().required('Required').max(new Date(), 'Invalid'),
-      preferredLanguage: Yup.string()
-      .trim()
-      .required('Required'),
-      email: Yup.string()
-      .trim()
-      .email('Please enter a valid email')
-      .required('Please enter your email'),
-    }),
-    Yup.object().shape({
-        degree: Yup.string()
-        .trim()
-        .required('Required'), 
-        college: Yup.string()
         .trim()
         .required('Required'),
-        yearOfGraduation: Yup.number()
+      dateOfBirth: Yup.date()
+        .required('Required')
+        .max(new Date(), 'Invalid')
+        .min(MIN_DATE, 'You must be at least 21 years old'),
+      image: fileValidation,
+      about: Yup.string()
+      .trim()
+      .min(50, 'About section must be at least 50 characters')
+      .max(200, 'About section cannot exceed 200 characters')
+      .required('Required')    
+    }),
+    Yup.object().shape({
+      degree: Yup.string()
+        .trim()
+        .required('Required'),
+      college: Yup.string()
+        .trim()
+        .required('Required'),
+      yearOfGraduation: Yup.number()
         .required('Required')
         .min(1900, 'Invalid')
-        .max(new Date()
-        .getFullYear(), 'Invalid'),
+        .max(new Date().getFullYear(), 'Invalid'),
     }),
     Yup.object().shape({
-        jobTitle: Yup.string()
-        .trim()
-        .required('Required'), 
-        lastWorkedCompany: Yup.string()
+      jobTitle: Yup.string()
         .trim()
         .required('Required'),
-        yearsOfExperience: Yup.number()
+      lastWorkedCompany: Yup.string()
+        .trim()
+        .required('Required'),
+      yearsOfExperience: Yup.number()
         .required('Required')
-        .min(0, 'Invalid'), 
-        stack: Yup.string()
+        .min(0, 'Invalid'),
+      stack: Yup.string()
         .trim()
         .required('Required'),
     }),
     Yup.object().shape({
-        resume: fileValidation,
-        degreeCertificate:fileValidation,
-        experienceCertificate: fileValidation,
+      resume: fileValidation,
+      degreeCertificate: fileValidation,
+      experienceCertificate: fileValidation,
     }),
-];
-
+  ];
 
 
 
@@ -130,17 +130,6 @@ export const timeSheduleValidation = Yup.object({
       if (!value) return false;
       const currencyFormat = /^[1-9]\d*(\.\d{1,2})?$/; 
       return currencyFormat.test(value.toString());
-    }),
-  category: Yup.string().required('Category is required'),
-  about: Yup.string()
-    .required('About section is required')
-    .min(10, 'Must be at least 10 characters'),
-  image: Yup.mixed()
-    .required('Image is required')
-    .test('is-image', 'Only image files are allowed', (value) => {
-      if (!value) return false;
-      const file = value as File;
-      return file && file.type.startsWith('image/'); 
     }),
 });
 

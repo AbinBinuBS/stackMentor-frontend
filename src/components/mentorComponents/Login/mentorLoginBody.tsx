@@ -23,9 +23,9 @@ const MentorLoginBody: React.FC = () => {
         validationSchema: signInValidation,
         onSubmit: async (values) => {
             try {
-                console.log("1")
                 setLoading(true);
-                const response = await axios.post(`${LOCALHOST_URL}/api/mentor/login`, values);
+                const response = await axios.post(`${LOCALHOST_URL}/api/mentor/login`, values,{
+                });
                 console.log(response)
                 if (response.data.message === 'Success') {
                     const accessToken = response.data.accessToken;

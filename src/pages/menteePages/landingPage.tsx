@@ -1,18 +1,15 @@
-import Footer from "../../components/commonComponents/Footer"
-import MenteeHeader from "../../components/commonComponents/menteeHeader"
-import LandingBody from "../../components/menteeComponents/LandingPageComponents/landingBody"
-import LandingHeadline from "../../components/menteeComponents/LandingPageComponents/landingHeadline"
+import Footer from "../../components/commonComponents/Footer";
+import MenteeHeader from "../../components/commonComponents/menteeHeader";
+import MenteeHomeBody from "../../components/menteeComponents/LandingPageComponents/landingBody";
 
-
-const LandingPage = () =>{
+const LandingPage = () => {
     return (
-        <>
-            <MenteeHeader/>
-            <LandingHeadline/>
-            <LandingBody/>
-            <Footer/>
-        </>
-    )
+        <div className="bg-slate-50 min-h-screen">
+            <MenteeHeader />
+            <MenteeHomeBody />
+            <Footer />
+        </div>
+    );
 }
 
-export default LandingPage
+export default LandingPage;

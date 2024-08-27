@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SliceState } from "../interfaces/menteeInterfaces/IReduxStore";
+import { SliceState } from "../interfaces/IReduxStore";
 
 const INITIAL_STATE : SliceState = {
     accessToken : "",

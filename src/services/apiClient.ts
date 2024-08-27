@@ -12,12 +12,10 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
     config => {
         const state = store.getState();
-        const accessToken = state.mentor.accessToken;
-
+        const accessToken = state.mentor.accessToken;        
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
-
         return config;
     },
     error => Promise.reject(error)
