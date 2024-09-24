@@ -1,80 +1,315 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import apiClient from '../../../services/apiClient';
+import { LOCALHOST_URL } from '../../../constants/constants';
+import { MentorVerification } from '../../../interfaces/mentorInterfaces';
+import toast from 'react-hot-toast';
+import { Eye, EyeOff } from 'lucide-react';
+import axios from 'axios';
 
-const MentorAccountBody = () => {
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required('Name is required'),
+  image: Yup.mixed()
+    .nullable()
+    .test('fileType', 'Unsupported file format', function (value: any) {
+      if (!value || !(value instanceof File)) return true;
+      return ['image/jpeg', 'image/png', 'image/gif'].includes(value.type);
+    })
+    .test('fileSize', 'File too large', function (value: any) {
+      if (!value || !(value instanceof File)) return true;
+      return value.size <= 5 * 1024 * 1024; 
+    }),
+});
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(URL.createObjectURL(file));
+const passwordValidationSchema = Yup.object().shape({
+  oldPassword: Yup.string().required('Old password is required'),
+  newPassword: Yup.string()
+    .required('New password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+    ),
+  confirmNewPassword: Yup.string()
+    .required('Confirm new password is required')
+    .oneOf([Yup.ref('newPassword'), ''], 'Passwords must match'),
+});
+
+const MentorAccountBody: React.FC = () => {
+  const [mentorData, setMentorData] = useState<MentorVerification | null>(null);
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const response = await apiClient.get(`${LOCALHOST_URL}/api/mentor/getmentorData`);
+      setMentorData(response.data);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to fetch mentor data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      name: mentorData?.name || '',
+      image: null as File | null,
+    },
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      try {
+        const formData = new FormData();
+        formData.append('name', values.name);
+        if (values.image instanceof File) {
+          formData.append('image', values.image);
+        }
+
+        const response = await apiClient.put(`${LOCALHOST_URL}/api/mentor/editProfile`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        if (response.data.message === "Success") {
+          toast.success("Profile updated successfully");
+          fetchData();
+        } else {
+          toast.error("Something unexpected happened. Please try again later.");
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("An error occurred while updating the profile.");
+      }
+    },
+  });
+
+  const passwordFormik = useFormik({
+    initialValues: {
+      oldPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    },
+    validationSchema: passwordValidationSchema,
+    onSubmit: async (values) => {
+      try {
+        const response = await apiClient.put(`${LOCALHOST_URL}/api/mentor/changePassword`, {
+          oldPassword: values.oldPassword,
+          newPassword: values.newPassword,
+        });
+  
+        if (response.data.message === "Success") {
+          toast.success("Password changed successfully");
+          setShowPasswordFields(false);
+          passwordFormik.resetForm();
+        } else {
+          toast.error("Failed to change password. Please try again.");
+        }
+      } catch (error: unknown) {  
+        console.log("11111111111111111111111111111",error)
+        if (axios.isAxiosError(error) && error.response?.data?.message) {
+          // Handle Axios-specific error with proper type checking
+          if (error.response.data.message === "old password don't match") {
+            toast.error("Old password doesn't match");
+          } else {
+            toast.error("An error occurred while changing the password.");
+          }
+        } else {
+          toast.error("An unexpected error occurred.");
+          console.error(error); // Log the raw error for debugging
+        }
+      }
+    },
+  });
+  
+  
+
+  const togglePasswordFields = () => {
+    setShowPasswordFields(!showPasswordFields);
+    if (!showPasswordFields) {
+      passwordFormik.resetForm();
+    }
+  };
+
+  const togglePasswordVisibility = (field: string) => {
+    switch (field) {
+      case 'oldPassword':
+        setShowOldPassword(!showOldPassword);
+        break;
+      case 'newPassword':
+        setShowNewPassword(!showNewPassword);
+        break;
+      case 'confirmNewPassword':
+        setShowConfirmNewPassword(!showConfirmNewPassword);
+        break;
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h2 className="text-2xl font-semibold text-center mb-6">Account Settings</h2>
-        <form>
-          <div className="mb-4 text-center">
-            <label htmlFor="profileImage" className="block text-gray-700 font-medium mb-2">
-              Profile Picture
-            </label>
-            <div className="relative w-32 h-32 mx-auto mb-4">
-              {profileImage ? (
-                <img src={profileImage} alt="Profile" className="w-full h-full rounded-full object-cover shadow-md" />
-              ) : (
-                <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center shadow-md">
-                  <span className="text-gray-500">Upload</span>
-                </div>
-              )}
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-xl font-semibold text-center mb-4">Account Settings</h2>
+
+        <div className="mb-6">
+          <div className="text-center mb-4">
+            <div className="relative w-24 h-24 mx-auto mb-2">
+              <img 
+                src={formik.values.image instanceof File ? URL.createObjectURL(formik.values.image) : mentorData?.image} 
+                alt="Profile" 
+                className="w-full h-full rounded-full object-cover shadow-sm" 
+              />
               <input
                 type="file"
-                id="profileImage"
+                id="image"
                 accept="image/*"
-                onChange={handleImageUpload}
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0] || null;
+                  formik.setFieldValue("image", file);
+                }}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
             </div>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
-              Name
+            <label htmlFor="image" className="text-sm text-gray-600">
+              Profile Picture
             </label>
-            <input
-              type="text"
-              id="name"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="John Doe"
-            />
+            {formik.errors.image && formik.touched.image && (
+              <div className="text-red-500 text-xs mt-1">{formik.errors.image as string}</div>
+            )}
           </div>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="example@example.com"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="********"
-            />
-          </div>
-          <div className="flex justify-center">
-            <button className="px-6 py-2 text-white bg-purple-600 rounded-full hover:bg-purple-700 focus:outline-none">
-              Save Changes
-            </button>
-          </div>
-        </form>
+
+          <form onSubmit={formik.handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                {...formik.getFieldProps('name')}
+                className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              {formik.errors.name && formik.touched.name && (
+                <div className="text-red-500 text-xs mt-1">{formik.errors.name}</div>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={mentorData?.mentorId.email || ''}
+                readOnly
+                className="w-full px-3 py-2 border rounded-md text-sm bg-gray-100 cursor-not-allowed"
+              />
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                className="w-full px-4 py-2 text-sm text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none"
+              >
+                Save Profile Changes
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="border-t pt-4">
+          <button
+            onClick={togglePasswordFields}
+            className="w-full px-4 py-2 text-sm text-purple-600 border border-purple-600 rounded-md hover:bg-purple-50 focus:outline-none mb-4"
+          >
+            {showPasswordFields ? 'Cancel Password Change' : 'Change Password'}
+          </button>
+
+          {showPasswordFields && (
+            <form onSubmit={passwordFormik.handleSubmit} className="space-y-4">
+              <div className="relative">
+                <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                  Old Password
+                </label>
+                <input
+                  type={showOldPassword ? "text" : "password"}
+                  id="oldPassword"
+                  {...passwordFormik.getFieldProps('oldPassword')}
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
+                  placeholder="Enter old password"
+                />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility('oldPassword')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-6"
+                >
+                  {showOldPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                </button>
+                {passwordFormik.touched.oldPassword && passwordFormik.errors.oldPassword && (
+                  <div className="text-red-500 text-xs mt-1">{passwordFormik.errors.oldPassword}</div>
+                )}
+              </div>
+              <div className="relative">
+                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                  New Password
+                </label>
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  id="newPassword"
+                  {...passwordFormik.getFieldProps('newPassword')}
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
+                  placeholder="Enter new password"
+                />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility('newPassword')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-6"
+                >
+                  {showNewPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                </button>
+                {passwordFormik.touched.newPassword && passwordFormik.errors.newPassword && (
+                  <div className="text-red-500 text-xs mt-1">{passwordFormik.errors.newPassword}</div>
+                )}
+              </div>
+              <div className="relative">
+                <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirm New Password
+                </label>
+                <input
+                  type={showConfirmNewPassword ? "text" : "password"}
+                  id="confirmNewPassword"
+                  {...passwordFormik.getFieldProps('confirmNewPassword')}
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
+                  placeholder="Confirm new password"
+                />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility('confirmNewPassword')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-6"
+                >
+                  {showConfirmNewPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                </button>
+                {passwordFormik.touched.confirmNewPassword && passwordFormik.errors.confirmNewPassword && (
+                  <div className="text-red-500 text-xs mt-1">{passwordFormik.errors.confirmNewPassword}</div>
+                )}
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  className="w-full px-4 py-2 text-sm text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none"
+                >
+                  Save Password Changes
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

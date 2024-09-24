@@ -12,6 +12,8 @@ import MentorSheduleTimePage from "../pages/mentorPages/mentorSheduleTimePage"
 import MentorMySlotPage from "../pages/mentorPages/mentorMySlotPage"
 import MentorProtectiveCheckLogout from "../protectiveCheck/mentorLogoutProtectiveCheck"
 import MentorProtectiveCheck from "../protectiveCheck/mentorProtectiveCheck"
+import MentorBookedSlotsPage from "../pages/mentorPages/mentorBookedSlotsPage"
+import MentorChatPage from "../pages/chatpages/mentorChatPage"
 
 
 
@@ -29,6 +31,9 @@ const MentorRoutes = () =>{
             <Route path="/account" element={< MentorProtectiveCheck element={<MentorAccountPage/>} />}  />
             <Route path="/schedule-time" element={< MentorProtectiveCheck element={<MentorSheduleTimePage/>} />}  />
             <Route path="/my-slot" element={< MentorProtectiveCheck element={<MentorMySlotPage/>} />}  />
+            <Route path="/booked-slot" element={< MentorProtectiveCheck element={<MentorBookedSlotsPage/>} />}  />
+            <Route path="/chat" element={< MentorProtectiveCheck element={<MentorChatPage/>} />}  />
+
         </Routes>
     )
 }

@@ -92,7 +92,7 @@ const MentorMySlotBody: React.FC = () => {
                 toast.success('Slot removed successfully');
                 setSlots(prevSlots => prevSlots.filter(slot => slot._id !== id));
             } else {
-                toast.error('Failed to delete slot: ' + response.data.message);
+                toast.error( response.data.message);
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -141,14 +141,11 @@ const MentorMySlotBody: React.FC = () => {
 									End: {formattedEndTime(slot.endTime)}
 								</p>
 								<div className="mt-2 space-x-2">
-									<button className="px-2 py-1 bg-purple-500 text-white rounded-full hover:bg-purple-600 text-sm">
-										Reschedule
-									</button>
-									<button
-										onClick={() => handleDelete(slot._id)}
-										className="px-2 py-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-sm"
+								<button
+									onClick={() => handleDelete(slot._id)}
+									className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
 									>
-										Remove
+									Remove
 									</button>
 								</div>
 							</div>
@@ -172,7 +169,7 @@ const MentorMySlotBody: React.FC = () => {
 							key={i}
 							onClick={() => paginate(i + 1)}
 							className={`mx-1 px-3 py-1 rounded ${
-								currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+								currentPage === i + 1 ? "bg-purple-500 text-white" : "bg-gray-200"
 							}`}
 						>
 							{i + 1}

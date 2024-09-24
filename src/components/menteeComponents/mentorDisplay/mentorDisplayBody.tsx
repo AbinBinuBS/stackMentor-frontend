@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { FaArrowRight, FaArrowLeft, FaSearch } from 'react-icons/fa';
 import { LOCALHOST_URL } from '../../../constants/constants';
 import { useNavigate } from 'react-router-dom';
+import apiClientMentee from '../../../services/apiClientMentee';
 
 type Level = 'beginner' | 'intermediate' | 'expert';
 
@@ -28,7 +29,7 @@ const MentorDisplayBody: React.FC = () => {
   const fetchMentors = async (selectedLevel: Level) => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${LOCALHOST_URL}/api/mentees/getMentors?level=${selectedLevel}`);
+      const response = await apiClientMentee.get(`${LOCALHOST_URL}/api/mentees/getMentors?level=${selectedLevel}`);
       console.log("Response data:", response.data);
 
       if (Array.isArray(response.data.mentorData)) {

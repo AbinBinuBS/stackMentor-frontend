@@ -75,10 +75,10 @@ const MenteeHeader: React.FC = () => {
               Q&A
             </button>
             <button
-              onClick={() => navigate('/account')}
+              onClick={() => navigate('/MySlot')}
               className="text-black font-semibold"
             >
-              Account
+              My Slots
             </button>
             <div className="relative">
               <button

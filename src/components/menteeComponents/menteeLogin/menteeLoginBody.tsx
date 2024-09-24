@@ -58,6 +58,11 @@ const MenteeLoginBody = () => {
     },
   });
 
+
+  const handleGoogleAuthentication = () =>{
+    window.location.href = "http://localhost:3001/auth";
+  }
+
   return (
     <div className="flex justify-center items-center w-full h-screen bg-gray-100">
       <div className="flex bg-white rounded-lg shadow-lg w-[700px] h-auto max-h-[800px] overflow-hidden">
@@ -123,6 +128,7 @@ const MenteeLoginBody = () => {
                 Register
               </a>
             </p>
+            <button onClick={handleGoogleAuthentication}>google authentication</button>
           </div>
         </div>
       </div>

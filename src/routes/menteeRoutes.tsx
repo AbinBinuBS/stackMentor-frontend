@@ -10,6 +10,8 @@ import MenteeLoginProtectiveCheck from "../protectiveCheck/menteeLoginProtective
 import MenteeLogoutProtectiveCheck from "../protectiveCheck/menteeLogoutProtectiveCheck";
 import MenteeDisplayMentorPage from "../pages/menteePages/menteeDisplayMentorPage";
 import MenteeSignleMentorPage from "../pages/menteePages/menteeSignleMentorPage";
+import MenteeSlotBookedPage from "../pages/menteePages/menteeSlotBookedPage";
+import ChatPage from "../pages/chatpages/chatPage";
 
 const MenteeRoutes = () => {
   return (
@@ -23,6 +25,10 @@ const MenteeRoutes = () => {
       <Route path="/otp" element={<MenteeLogoutProtectiveCheck element={<OtpPage />} />} />
       <Route path="/mentorList" element={<MenteeLoginProtectiveCheck element={<MenteeDisplayMentorPage />} />} />
       <Route path='/mentorDetails/:id' element={<MenteeLoginProtectiveCheck element={<MenteeSignleMentorPage/>}/>}/>
+      <Route path="/MySlot" element={<MenteeLoginProtectiveCheck element={<MenteeSlotBookedPage />} />} />
+      <Route path="/chat" element={<MenteeLoginProtectiveCheck element={<ChatPage />} />} />
+
+
     </Routes>
   );
 };
