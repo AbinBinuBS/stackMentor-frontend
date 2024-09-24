@@ -28,6 +28,10 @@ const MenteeHeader: React.FC = () => {
     navigate('/login');
   };
 
+  const openWallet = () =>{
+    navigate('/wallet')
+  }
+
   return (
     <div
       className={`fixed top-0 left-0 w-full flex justify-center z-20 transition-all`}
@@ -103,6 +107,12 @@ const MenteeHeader: React.FC = () => {
               </button>
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-md">
+                  <button
+                    onClick={openWallet}
+                    className="block px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
+                  >
+                    Wallet
+                  </button>
                   <button
                     onClick={handleLogout}
                     className="block px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"

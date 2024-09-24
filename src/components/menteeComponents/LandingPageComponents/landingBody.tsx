@@ -1,6 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import { menteeLogin } from '../../../redux/menteeSlice';
 
 const MenteeHomeBody: React.FC = () => {
+    const dispatch = useDispatch()
+    const location = useLocation();
+    const getQueryParams = (search: string) => {
+        return new URLSearchParams(search);
+    };
+
+    useEffect(() => {
+        const queryParams = getQueryParams(location.search);
+        const accessToken = queryParams.get('accessToken');
+        const refreshToken = queryParams.get('refreshToken');
+        console.log("1111111111111111111",accessToken)
+        console.log("2222222222222222222",refreshToken)
+       if(accessToken && refreshToken){
+        console.log("1111111111111111111")
+            dispatch(menteeLogin({ accessToken, refreshToken }));
+       }
+    }, [location.search]); 
+
+
+
     return (
         <>
             <div className="flex flex-col lg:flex-row items-center justify-between w-full h-[300px] lg:h-[400px] my-10 bg-blue-50 p-6 lg:p-12 text-blue-800 font-sans">

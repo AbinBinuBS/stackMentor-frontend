@@ -116,20 +116,18 @@ const MySlotBody: React.FC = () => {
     }
   };
 
-//   const handleCancel = async (slotId: string) => {
-//     try {
-//       const response = await apiClientMentee.delete(`${LOCALHOST_URL}/api/mentees/cancelBooking/${slotId}`);
-//       if (response.status === 200) {
-//         setSlots(slots.filter(slot => slot._id !== slotId));
-//         setSuccessMessage("Slot cancelled successfully!");
-//         setShowSuccessMessage(true);
-//       } else {
-//         console.error("Failed to cancel slot:", response.statusText);
-//       }
-//     } catch (error) {
-//       console.error("Error cancelling slot:", error);
-//     }
-//   };
+  const handleCancel = async (slot: Slot) => {
+    try {
+      const response = await apiClientMentee.put(`${LOCALHOST_URL}/api/mentees/cancelSlot/`,slot);
+      if (response.status === 200) {
+       
+      } else {
+        console.error("Failed to cancel slot:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error cancelling slot:", error);
+    }
+  };
 
   const handleConfirmReschedule = async (newSlotId: string) => {
     if (!selectedSlot) return;
@@ -234,6 +232,12 @@ const MySlotBody: React.FC = () => {
                         className="px-3 py-1 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white text-sm rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200">
                           Chat
                         </button>
+                        <button
+                        onClick={() => handleCancel(slot)}
+                        className="px-3 py-1 bg-red-500 text-white text-sm rounded-md font-medium hover:bg-red-600 transition duration-200"
+                      >
+                        Cancel
+                      </button>
                       </div>
                     </div>
                   </div>
@@ -295,6 +299,7 @@ const MySlotBody: React.FC = () => {
                         >
                           Reschedule
                         </button>
+                        
                         )}
                       </td>
                     </tr>

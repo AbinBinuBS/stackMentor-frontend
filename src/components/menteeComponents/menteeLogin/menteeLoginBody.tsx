@@ -5,9 +5,9 @@ import { LOCALHOST_URL } from '../../../constants/constants';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { menteeLogin } from '../../../redux/menteeSlice';
-import toast from 'react-hot-toast'
+import toast from 'react-hot-toast';
 import { signInValidation } from '../../../validations/commonValidation';
-
+import { FcGoogle } from 'react-icons/fc';
 
 const initialValues = {
   email: '',
@@ -29,9 +29,9 @@ const MenteeLoginBody = () => {
         if (response.data.message === 'Success') {
           const accessToken = response.data.accessToken;
           const refreshToken = response.data.refreshToken;
-          console.log(response.data)
+          console.log(response.data);
           dispatch(menteeLogin({ accessToken, refreshToken }));
-          toast.success('Login Successfully...')
+          toast.success('Login Successfully...');
           navigate('/');
         } else {
           toast.error(response.data.message);
@@ -40,11 +40,8 @@ const MenteeLoginBody = () => {
         if (axios.isAxiosError(error)) {
           const status = error.response?.status;
           const message = error.response?.data?.message;
-          if (status === 400) {
+          if (status === 400 || status === 409) {
             toast.error(message);
-          } else if (status === 409) {
-            toast.error(message);
-
           } else {
             toast.error(message);
           }
@@ -58,10 +55,9 @@ const MenteeLoginBody = () => {
     },
   });
 
-
-  const handleGoogleAuthentication = () =>{
-    window.location.href = "http://localhost:3001/auth";
-  }
+  const handleGoogleAuthentication = () => {
+    window.location.href = 'http://localhost:3001/auth';
+  };
 
   return (
     <div className="flex justify-center items-center w-full h-screen bg-gray-100">
@@ -72,6 +68,14 @@ const MenteeLoginBody = () => {
         <div className="flex-1 p-6 flex flex-col justify-between">
           <div>
             <h2 className="text-3xl font-bold mb-6 text-gray-800">Login</h2>
+            {/* Google Authentication Button at the Top */}
+            <button
+              onClick={handleGoogleAuthentication}
+              className="flex items-center justify-center bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-md shadow-md transition duration-150 ease-in-out mb-4"
+            >
+              <FcGoogle className="mr-2" size={24} />
+              Sign in with Google
+            </button>
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block text-sm font-semibold text-gray-800 mb-2">
@@ -128,7 +132,6 @@ const MenteeLoginBody = () => {
                 Register
               </a>
             </p>
-            <button onClick={handleGoogleAuthentication}>google authentication</button>
           </div>
         </div>
       </div>

@@ -63,7 +63,7 @@ const MenteeSignleMentorPage: React.FC = () => {
     };
 
     const handleGoHome = () => {
-        navigate('/'); // Assuming '/' is your home route
+        navigate('/'); 
     };
 
     if (isLoading) {

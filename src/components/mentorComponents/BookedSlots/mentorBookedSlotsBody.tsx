@@ -35,7 +35,6 @@ const MentorBookedSlotsBody: React.FC = () => {
     try{
       const response = await apiClient.post(`${LOCALHOST_URL}/api/chat/mentor`,slot)
       if(response.data.message == "Success"){
-      console.log("11111111111111111111111",response.data)
         dispatch(setSelectedChat(response.data.chat))
         navigate('/mentor/chat')
       }
@@ -45,12 +44,10 @@ const MentorBookedSlotsBody: React.FC = () => {
 
   }
 
-  // Calculate the slots to be displayed on the current page
   const indexOfLastSlot = currentPage * slotsPerPage;
   const indexOfFirstSlot = indexOfLastSlot - slotsPerPage;
   const currentSlots = bookedSlots?.slice(indexOfFirstSlot, indexOfLastSlot);
 
-  // Change page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   if (loading) {
