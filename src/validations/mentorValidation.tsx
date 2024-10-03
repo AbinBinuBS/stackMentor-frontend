@@ -46,7 +46,7 @@ export const MentorsignupValidation = Yup.object({
     })
     .test('fileSize', 'File size is too large', (value) => {
       if (value && value instanceof File) {
-        return value.size <= 5 * 1024 * 1024; // 5MB
+        return value.size <= 5 * 1024 * 1024; 
       }
       return false;
     });

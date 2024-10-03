@@ -3,12 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { menteeLogout } from '../../redux/menteeSlice';
+import { useSelector } from 'react-redux';
+
+
+interface StoreData{
+  mentee:{
+    accessToken : string;
+    refreshToken : string;
+  }
+}
 
 const MenteeHeader: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const accessToken = useSelector((state:StoreData)=>state.mentee.accessToken)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +41,8 @@ const MenteeHeader: React.FC = () => {
   const openWallet = () =>{
     navigate('/wallet')
   }
+
+  
 
   return (
     <div
@@ -61,19 +73,13 @@ const MenteeHeader: React.FC = () => {
               Home
             </button>
             <button
-              onClick={() => navigate('/courses')}
-              className="text-black font-semibold"
-            >
-              Courses
-            </button>
-            <button
               onClick={() => navigate('/mentorList')}
               className="text-black font-semibold"
             >
               Mentor
             </button>
             <button
-              onClick={() => navigate('/qa')}
+              onClick={() => navigate('/questionsAsked')}
               className="text-black font-semibold"
             >
               Q&A
@@ -113,12 +119,22 @@ const MenteeHeader: React.FC = () => {
                   >
                     Wallet
                   </button>
-                  <button
+                  {accessToken ? (
+                    <button
                     onClick={handleLogout}
                     className="block px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
                   >
                     Logout
                   </button>
+                  ) : (
+                  <button
+                    onClick={()=>navigate('/login')}
+                    className="block px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
+                  >
+                    Login
+                  </button>
+                )}
+                  
                 </div>
               )}
             </div>

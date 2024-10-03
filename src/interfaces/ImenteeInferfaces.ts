@@ -19,3 +19,14 @@ export interface IMentorVerification {
     createdAt: Date;
     updatedAt: Date;
   }
+
+
+  export interface IQaData {
+    _id : unknown;
+    title: string;
+    body: string;
+    reply?: string;
+    isAnswered?:boolean;
+    menteeId?:{_id:string,name:string} | undefined
+    mentorId?: {_id:string,name:string} | undefined
+  }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaTachometerAlt, FaUsers, FaChalkboardTeacher, FaUniversity, FaQuestionCircle, FaUsersCog, FaChartLine, FaBookOpen } from 'react-icons/fa';
+import { FaTachometerAlt, FaUsers, FaChalkboardTeacher, FaQuestionCircle, FaUsersCog, FaChartLine } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 
 const AdminDashboardSidebar: React.FC = () => {
@@ -9,11 +9,8 @@ const AdminDashboardSidebar: React.FC = () => {
     Dashboard: '/admin/dashboard',
     Users: '/admin/users',
     Mentors: '/admin/mentor-list',
-    Institute: '/admin/institute',
-    QandA: '/admin/qanda',
-    CommunityMeet: '/admin/community-meet',
-    MeetReport: '/admin/meet-report',
-    Courses: '/admin/courses'
+    QA: '/admin/qa',
+    'Community Meet': '/admin/community-meet',
   };
 
   return (
@@ -46,11 +43,8 @@ const sidebarItems = [
   { icon: FaTachometerAlt, label: "Dashboard" },
   { icon: FaUsers, label: "Users" },
   { icon: FaChalkboardTeacher, label: "Mentors" },
-  { icon: FaUniversity, label: "Institute" },
-  { icon: FaQuestionCircle, label: "Q&A" },
+  { icon: FaQuestionCircle, label: "QA" },
   { icon: FaUsersCog, label: "Community Meet" },
-  { icon: FaChartLine, label: "Meet Report" },
-  { icon: FaBookOpen, label: "Courses" },
 ];
 
 export default AdminDashboardSidebar;

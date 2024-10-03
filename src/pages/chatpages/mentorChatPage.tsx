@@ -12,21 +12,21 @@ interface User {
 }
 
 const MentorChatPage = () => {
-  const [user, setUser] = useState<User | null>(null); // Initialize with null
-  const [loading, setLoading] = useState<boolean>(true); // For showing loading state
-  const [error, setError] = useState<string | null>(null); // For handling errors
+  const [user, setUser] = useState<User | null>(null); 
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMentor = async () => {
       try {
-        setLoading(true); // Start loading
+        setLoading(true); 
         const response = await apiClient.get(`${LOCALHOST_URL}/api/mentor/getMentorData`);
         setUser(response.data);
-        setLoading(false); // End loading
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching mentor data:", error);
         setError("Failed to fetch mentor data.");
-        setLoading(false); // End loading even on error
+        setLoading(false); 
       }
     };
 
@@ -34,11 +34,11 @@ const MentorChatPage = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Loading state
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>; // Error state
+    return <div>Error: {error}</div>;
   }
 
   return (
@@ -47,7 +47,7 @@ const MentorChatPage = () => {
       <div className="flex flex-1 bg-slate-50 overflow-y-auto">
         <MentorAccountSidebar />
         <main className="flex-1 ml-96 mt-40 overflow-y-auto">
-          {user ? <MentorChatBody user={user} /> : <div>Loading...</div>} {/* Check if user is fetched */}
+          {user ? <MentorChatBody user={user} /> : <div>Loading...</div>} 
         </main>
       </div>
     </div>

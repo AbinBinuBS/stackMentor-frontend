@@ -8,6 +8,7 @@ import { menteeLogin } from '../../../redux/menteeSlice';
 import toast from 'react-hot-toast';
 import { signInValidation } from '../../../validations/commonValidation';
 import { FcGoogle } from 'react-icons/fc';
+import { Eye, EyeOff } from 'lucide-react';
 
 const initialValues = {
   email: '',
@@ -17,7 +18,8 @@ const initialValues = {
 const MenteeLoginBody = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } = useFormik({
     initialValues,
@@ -59,6 +61,10 @@ const MenteeLoginBody = () => {
     window.location.href = 'http://localhost:3001/auth';
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="flex justify-center items-center w-full h-screen bg-gray-100">
       <div className="flex bg-white rounded-lg shadow-lg w-[700px] h-auto max-h-[800px] overflow-hidden">
@@ -68,7 +74,6 @@ const MenteeLoginBody = () => {
         <div className="flex-1 p-6 flex flex-col justify-between">
           <div>
             <h2 className="text-3xl font-bold mb-6 text-gray-800">Login</h2>
-            {/* Google Authentication Button at the Top */}
             <button
               onClick={handleGoogleAuthentication}
               className="flex items-center justify-center bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-md shadow-md transition duration-150 ease-in-out mb-4"
@@ -98,15 +103,24 @@ const MenteeLoginBody = () => {
                 <label htmlFor="password" className="block text-sm font-semibold text-gray-800 mb-2">
                   Password
                 </label>
-                <input
-                  id="password"
-                  value={values.password}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  type="password"
-                  className="block w-full sm:w-[250px] p-1 text-sm border border-gray-300 rounded-md shadow-sm bg-transparent placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-                  placeholder="Enter your password"
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    value={values.password}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type={showPassword ? "text" : "password"}
+                    className="block w-full sm:w-[250px] pr-10 p-1 text-sm border border-gray-300 rounded-md shadow-sm bg-transparent placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-600 cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
                 {touched.password && errors.password && (
                   <small className="text-red-500">{errors.password}</small>
                 )}

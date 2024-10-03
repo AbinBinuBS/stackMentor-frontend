@@ -4,9 +4,10 @@ import { LOCALHOST_URL } from "../../../constants/constants";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setSelectedChat } from "../../../redux/chatSlice";
+import toast from "react-hot-toast";
 
 interface MentorData {
-  _id:string;
+  _id: string;
   name: string;
   image: string;
 }
@@ -18,6 +19,9 @@ interface Slot {
   endTime: string;
   price: number;
   mentorData: MentorData;
+  status: string;
+  roomId:string;
+  isAllowed : boolean;
 }
 
 interface RescheduleOption {
@@ -49,47 +53,30 @@ const MySlotBody: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [slotsPerPage] = useState(5);
-  const [slotType, setSlotType] = useState("booked");
-  const [isReloading, setIsReloading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
+  const [slotToCancel, setSlotToCancel] = useState<Slot | null>(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchSlots();
-  }, [slotType]);
+  }, []);
 
   const fetchSlots = async () => {
     setIsLoading(true);
     try {
-      let response;
-      switch (slotType) {
-        case "booked":
-          response = await apiClientMentee.get<{ bookedSlot: Slot[] }>(
-            `${LOCALHOST_URL}/api/mentees/getBookedSlots`
-          );
-          setSlots(response.data.bookedSlot);
-          break;
-        case "cancelled":
-          response = await apiClientMentee.get<{ cancelledSlot: Slot[] }>(
-            `${LOCALHOST_URL}/api/mentees/getCancelledSlots`
-          );
-          setSlots(response.data.cancelledSlot);
-          break;
-        case "expired":
-          response = await apiClientMentee.get<{ expiredSlot: Slot[] }>(
-            `${LOCALHOST_URL}/api/mentees/getExpiredSlots`
-          );
-          setSlots(response.data.expiredSlot);
-          break;
-      }
+      let response = await apiClientMentee.get<{ bookedSlot: Slot[] }>( `${LOCALHOST_URL}/api/mentees/getBookedSlots`);
+      setSlots(response.data.bookedSlot);
     } catch (error) {
       console.error("Error fetching slots:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+ 
 
   const handleReschedule = async (slot: Slot) => {
     setSelectedSlot(slot);
@@ -100,7 +87,6 @@ const MySlotBody: React.FC = () => {
       const response = await apiClientMentee.get<ApiResponse>(
         `${LOCALHOST_URL}/api/mentees/availableSlots/${slot._id}/${slot.price}`
       );
-      console.log("API response:", response.data);
 
       if (response.status === 200 && response.data.message === "Success") {
         setRescheduleOptions(response.data.availableSlots || []);
@@ -116,11 +102,21 @@ const MySlotBody: React.FC = () => {
     }
   };
 
-  const handleCancel = async (slot: Slot) => {
+  const handleCancelClick = (slot: Slot) => {
+    setSlotToCancel(slot);
+    setShowCancelConfirmation(true);
+  };
+
+  const handleConfirmCancel = async () => {
+    if (!slotToCancel) return;
+
     try {
-      const response = await apiClientMentee.put(`${LOCALHOST_URL}/api/mentees/cancelSlot/`,slot);
+      const response = await apiClientMentee.put(`${LOCALHOST_URL}/api/mentees/cancelSlot/`, slotToCancel);
       if (response.status === 200) {
-       
+        setShowCancelConfirmation(false);
+        setSuccessMessage("Slot cancelled successfully!");
+        setShowSuccessMessage(true);
+        fetchSlots();
       } else {
         console.error("Failed to cancel slot:", response.statusText);
       }
@@ -139,14 +135,9 @@ const MySlotBody: React.FC = () => {
       });
 
       if (response.status === 200) {
-        const updatedSlots = slots.map(slot => 
-          slot._id === selectedSlot._id ? { ...slot, _id: newSlotId } : slot
-        );
-        setSlots(updatedSlots);
         setIsRescheduleModalOpen(false);
         setSuccessMessage("Booking rescheduled successfully!");
         setShowSuccessMessage(true);
-        
         fetchSlots();
       } else {
         console.error("Failed to reschedule booking:", response.statusText);
@@ -156,28 +147,30 @@ const MySlotBody: React.FC = () => {
     }
   };
 
-  const handleChat = async(slot:Slot)=>{
-    try{
-      const response = await apiClientMentee.post(`${LOCALHOST_URL}/api/chat/mentee`,slot)
-      if(response.data.message == "Success"){
-      console.log("11111111111111111111111",response.data)
-        dispatch(setSelectedChat(response.data.chat))
-        navigate('/chat')
+  const handleChat = async (slot: Slot) => {
+    try {
+      const response = await apiClientMentee.post(`${LOCALHOST_URL}/api/chat/mentee`, slot);
+      if (response.data.message == "Success") {
+        dispatch(setSelectedChat(response.data.chat));
+        navigate('/chat');
       }
-    }catch(error){
-      console.log("error occured during chat:",error)
+    } catch (error) {
+      console.log("error occurred during chat:", error);
     }
-  }
-
-  const handleSlotTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSlotType(event.target.value);
-    setCurrentPage(1);
   };
 
 
+  const handleVedioCall = (slot:Slot) =>{
+    try{
+      navigate(`/room/${slot.roomId}`)
+    }catch(error){
+      console.log(error)
+    }
+  }
 
   const indexOfLastSlot = currentPage * slotsPerPage;
   const indexOfFirstSlot = indexOfLastSlot - slotsPerPage;
+
   const currentSlots = slots.slice(indexOfFirstSlot, indexOfLastSlot);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -185,16 +178,6 @@ const MySlotBody: React.FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto mt-8">
       <h1 className="text-2xl font-bold mb-4">My Slots</h1>
-      <div className="flex justify-between items-center mb-4">
-        <select 
-          value={slotType} 
-          onChange={handleSlotTypeChange}
-          className="p-2 border rounded"
-        >
-          <option value="booked">Booked Slots</option>
-          <option value="expired">Expired Slots</option>
-        </select>
-      </div>
       <div className="bg-white shadow-lg rounded-lg p-6 h-[600px]">
         <div className="h-full overflow-y-auto pr-4">
           {isLoading ? (
@@ -221,23 +204,57 @@ const MySlotBody: React.FC = () => {
                         <p className="text-sm text-gray-700">End: {convertTo12HourFormat(slot.endTime)}</p>
                       </div>
                       <div className="space-x-2">
-                        <button
-                          onClick={() => handleReschedule(slot)}
-                          className="px-3 py-1 bg-green-500 text-white text-sm rounded-md font-medium hover:bg-green-600 transition duration-200"
-                        >
-                          Reschedule
-                        </button>
-                        <button 
-                        onClick={()=> handleChat(slot)}
-                        className="px-3 py-1 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white text-sm rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200">
-                          Chat
-                        </button>
-                        <button
-                        onClick={() => handleCancel(slot)}
-                        className="px-3 py-1 bg-red-500 text-white text-sm rounded-md font-medium hover:bg-red-600 transition duration-200"
-                      >
-                        Cancel
-                      </button>
+                        {slot.status === 'completed' ? (
+                          <span className="text-green-500 font-medium">Completed</span>
+                        ) : slot.status === 'cancelled' ? (
+                          <span className="text-red-500 font-medium">Cancelled</span>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleReschedule(slot)}
+                              className="px-3 py-1 bg-green-500 text-white text-sm rounded-md font-medium hover:bg-green-600 transition duration-200"
+                            >
+                              Reschedule
+                            </button>
+                            <button
+                              onClick={() => handleCancelClick(slot)}
+                              className="px-3 py-1 bg-red-500 text-white text-sm rounded-md font-medium hover:bg-red-600 transition duration-200"
+                            >
+                              Cancel
+                            </button>
+                            {!slot.isAllowed ? (
+                              <>
+                                <button
+                                  className="px-3 py-1 bg-gray-300 text-white text-sm rounded-md font-medium cursor-not-allowed"
+                                  onClick={() => toast.error("You can chat when mentor allows you.")}
+                                >
+                                  Chat
+                                </button>
+                                <button
+                                  className="px-3 py-1 bg-gray-300 text-white text-sm rounded-md font-medium cursor-not-allowed"
+                                  onClick={() => toast.error("You can join when mentor allows you.")}
+                                >
+                                  Video Chat
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => handleChat(slot)}
+                                  className="px-3 py-1 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white text-sm rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200"
+                                >
+                                  Chat
+                                </button>
+                                <button
+                                  onClick={() => handleVedioCall(slot)}
+                                  className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md font-medium hover:bg-red-600 transition duration-200"
+                                >
+                                  Video Chat
+                                </button>
+                              </>
+                            )}
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -294,12 +311,11 @@ const MySlotBody: React.FC = () => {
                       <td>
                         {!option.isBooked && (
                           <button
-                          onClick={() => handleConfirmReschedule(option?._id)}
-                          className="px-4 py-2 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200"
-                        >
-                          Reschedule
-                        </button>
-                        
+                            onClick={() => handleConfirmReschedule(option._id)}
+                            className="px-4 py-2 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200"
+                          >
+                            Reschedule
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -317,6 +333,29 @@ const MySlotBody: React.FC = () => {
                 className="px-4 py-2 bg-gray-500 text-white rounded-md font-medium hover:bg-gray-600 transition duration-200"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+{showCancelConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 className="text-2xl font-bold mb-4">Confirm Cancellation</h2>
+            <p className="mb-6">Are you sure you want to cancel this slot?</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowCancelConfirmation(false)}
+                className="px-4 py-2 bg-gray-500 text-white rounded-md font-medium hover:bg-gray-600 transition duration-200"
+              >
+                No, Keep it
+              </button>
+              <button
+                onClick={handleConfirmCancel}
+                className="px-4 py-2 bg-red-500 text-white rounded-md font-medium hover:bg-red-600 transition duration-200"
+              >
+                Yes, Cancel
               </button>
             </div>
           </div>

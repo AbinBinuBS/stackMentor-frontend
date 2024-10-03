@@ -153,8 +153,6 @@ const AdminMentorDetailsBody: React.FC = () => {
             <>
               <DetailBox label="Name" value={mentorDetails.name} />
               <DetailBox label="Date of Birth" value={mentorDetails.dateOfBirth} />
-              <DetailBox label="Preferred Language" value={mentorDetails.preferredLanguage} />
-              <DetailBox label="Email" value={mentorDetails.email} />
               <DetailBox label="Degree" value={mentorDetails.degree} />
               <DetailBox label="College" value={mentorDetails.college} />
               <DetailBox label="Year of Graduation" value={mentorDetails.yearOfGraduation} />

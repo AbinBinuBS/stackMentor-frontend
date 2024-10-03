@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import axios from 'axios';
@@ -9,9 +7,11 @@ import { mentorLogin } from '../../../redux/mentorSlice';
 import { useNavigate } from 'react-router-dom';
 import { LOCALHOST_URL } from '../../../constants/constants';
 import { signInValidation } from '../../../validations/commonValidation';
+import { Eye, EyeOff } from 'lucide-react';
 
 const MentorLoginBody: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -57,6 +57,10 @@ const MentorLoginBody: React.FC = () => {
         },
     });
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
     return (
         <div className="flex items-center justify-start w-full lg:w-3/5 h-screen bg-gray-100">
             <div className="relative flex flex-col items-center justify-center w-4/5 h-4/5 shadow-2xl rounded-r-lg p-6 bg-white">
@@ -81,16 +85,25 @@ const MentorLoginBody: React.FC = () => {
                         </div>
                         <div className="mb-6">
                             <label htmlFor="password" className="block text-gray-700">Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={formik.values.password}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="w-full p-2 border border-gray-300 rounded"
-                                placeholder="Enter your password"
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    id="password"
+                                    name="password"
+                                    value={formik.values.password}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    className="w-full p-2 border border-gray-300 rounded pr-10"
+                                    placeholder="Enter your password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={togglePasswordVisibility}
+                                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-600"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                             {formik.touched.password && formik.errors.password && (
                                 <div className="text-red-500 text-sm">{formik.errors.password}</div>
                             )}

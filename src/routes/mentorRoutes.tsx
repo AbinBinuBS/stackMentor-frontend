@@ -14,6 +14,11 @@ import MentorProtectiveCheckLogout from "../protectiveCheck/mentorLogoutProtecti
 import MentorProtectiveCheck from "../protectiveCheck/mentorProtectiveCheck"
 import MentorBookedSlotsPage from "../pages/mentorPages/mentorBookedSlotsPage"
 import MentorChatPage from "../pages/chatpages/mentorChatPage"
+import RoomPage from "../pages/mentorPages/room"
+import QAPage from "../pages/mentorPages/aqPage"
+import CommunityMeetPage from "../pages/mentorPages/communityMeet"
+import MyCommunityPage from "../pages/mentorPages/myCommunityPage"
+import MentorGroupCallPage from "../pages/mentorPages/mentorGroupcallPage"
 
 
 
@@ -33,7 +38,15 @@ const MentorRoutes = () =>{
             <Route path="/my-slot" element={< MentorProtectiveCheck element={<MentorMySlotPage/>} />}  />
             <Route path="/booked-slot" element={< MentorProtectiveCheck element={<MentorBookedSlotsPage/>} />}  />
             <Route path="/chat" element={< MentorProtectiveCheck element={<MentorChatPage/>} />}  />
+            <Route path="/room/:roomId" element={< MentorProtectiveCheck element={<RoomPage/>} />}  />
+            <Route path="/qa" element={< MentorProtectiveCheck element={<QAPage/>} />}  />
+            <Route path="/community-meet" element={< MentorProtectiveCheck element={<CommunityMeetPage/>} />}  />
+            <Route path="/my-community-meet" element={< MentorProtectiveCheck element={<MyCommunityPage/>} />}  />
+            <Route path="/community/room/:roomId" element={< MentorProtectiveCheck element={<MentorGroupCallPage/>} />}  />
 
+           
+
+            
         </Routes>
     )
 }

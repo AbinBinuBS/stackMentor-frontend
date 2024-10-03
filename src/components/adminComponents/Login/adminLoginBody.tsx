@@ -7,9 +7,11 @@ import { adminLogin } from '../../../redux/adminSlice';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { signInValidation } from '../../../validations/commonValidation';
+import { Eye, EyeOff } from 'lucide-react';
 
 const AdminLoginBody: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const formik = useFormik({
@@ -52,6 +54,10 @@ const AdminLoginBody: React.FC = () => {
         },
     });
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
     return (
         <div className="flex items-center justify-start w-3/5 h-screen bg-gray-100">
             <div className="relative flex flex-col items-center justify-center w-4/5 h-4/5 shadow-2xl rounded-r-lg p-6 bg-white">
@@ -73,17 +79,30 @@ const AdminLoginBody: React.FC = () => {
                                 <div className="text-red-500 text-sm">{formik.errors.email}</div>
                             )}
                         </div>
-                        <div className="mb-6">
+                        <div className="mb-6 relative">
                             <label htmlFor="password" className="block text-gray-700">Password</label>
-                            <input
-                                type="password"
-                                name="password"
-                                value={formik.values.password}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                placeholder="Enter your password"
-                                className="w-full p-2 border border-gray-300 rounded bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    value={formik.values.password}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    placeholder="Enter your password"
+                                    className="w-full p-2 pr-10 border border-gray-300 rounded bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={togglePasswordVisibility}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5 text-gray-500" />
+                                    ) : (
+                                        <Eye className="h-5 w-5 text-gray-500" />
+                                    )}
+                                </button>
+                            </div>
                             {formik.touched.password && formik.errors.password && (
                                 <div className="text-red-500 text-sm">{formik.errors.password}</div>
                             )}

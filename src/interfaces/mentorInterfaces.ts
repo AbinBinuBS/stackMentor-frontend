@@ -13,7 +13,13 @@ export interface ISlotMentor {
     startTime: string;
     endTime: string;
     price: number;
-    mentorId: ObjectId;
+    bookingData: {
+      _id:ObjectId,
+      userId:ObjectId;
+      status:string;
+      roomId:string;
+      isAllowed:boolean;
+    }
     isBooked: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -54,3 +60,4 @@ export interface ISlotMentor {
     updatedAt: Date;
     __v: number;
   }
+

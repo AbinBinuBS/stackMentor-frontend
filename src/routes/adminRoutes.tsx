@@ -6,6 +6,8 @@ import AdminProtectiveCheckLogout from "../protectiveCheck/adminProtectiveChecke
 import AdminMentorListPage from "../pages/adminPages/adminMentorListPage"
 import AdminMentorSinglePage from "../pages/adminPages/adminMentorSinglePage"
 import AdminUserListPage from "../pages/adminPages/adminUserListPage"
+import AdminQAPage from "../pages/adminPages/adminQAPage"
+import AdminCommunityMeetPage from "../pages/adminPages/adminCommunityMeetPage"
 
 
 const AdminRoutes = ()=>{
@@ -16,7 +18,8 @@ const AdminRoutes = ()=>{
             <Route path="/mentor-list" element={<AdminProtectiveCheck element={<AdminMentorListPage />}/>} />
             <Route path='/mentor-details/:id' element={<AdminProtectiveCheck element={<AdminMentorSinglePage/>}/>}/>
             <Route path="/users" element={<AdminProtectiveCheck element={<AdminUserListPage />}/>} />
-
+            <Route path="/qa" element={<AdminProtectiveCheck element={<AdminQAPage />}/>} />
+            <Route path="/community-meet" element={<AdminProtectiveCheck element={<AdminCommunityMeetPage />}/>} />
         </Routes>
     )
 }

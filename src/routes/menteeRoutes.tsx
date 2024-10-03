@@ -13,6 +13,11 @@ import MenteeSignleMentorPage from "../pages/menteePages/menteeSignleMentorPage"
 import MenteeSlotBookedPage from "../pages/menteePages/menteeSlotBookedPage";
 import ChatPage from "../pages/chatpages/chatPage";
 import WalletPage from "../pages/menteePages/walletPage";
+import RoomPage from "../pages/menteePages/room";
+import QAPage from "../pages/menteePages/MenteeQ&APage";
+import AskQuestionPage from "../pages/menteePages/menteeAskQuestions";
+import CommunityMeetPage from "../pages/menteePages/communityMeetPage";
+import GroupCallPage from "../pages/menteePages/groupCallPage";
 
 const MenteeRoutes = () => {
   return (
@@ -29,9 +34,11 @@ const MenteeRoutes = () => {
       <Route path="/MySlot" element={<MenteeLoginProtectiveCheck element={<MenteeSlotBookedPage />} />} />
       <Route path="/chat" element={<MenteeLoginProtectiveCheck element={<ChatPage />} />} />
       <Route path="/wallet" element={<MenteeLoginProtectiveCheck element={<WalletPage />} />} />
-
-
-      
+      <Route path="/room/:roomId" element={<MenteeLoginProtectiveCheck element={<RoomPage />} />} />
+      <Route path="/questionsAsked" element={<MenteeLoginProtectiveCheck element={<QAPage />} />} />
+      <Route path="/askQuestion" element={<MenteeLoginProtectiveCheck element={<AskQuestionPage />} />} />
+      <Route path="/communityMeet" element={<MenteeLoginProtectiveCheck element={<CommunityMeetPage />} />} />
+      <Route path="/community/room/:roomId" element={<MenteeLoginProtectiveCheck element={<GroupCallPage />} />} />
     </Routes>
   );
 };
