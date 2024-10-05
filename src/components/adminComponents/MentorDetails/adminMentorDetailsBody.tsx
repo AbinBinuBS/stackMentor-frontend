@@ -35,7 +35,7 @@ const formatDate = (dateString: string): string => {
 const AdminMentorDetailsBody: React.FC = () => {
   const [verificationStatus, setVerificationStatus] = useState('pending');
   const [mentorDetails, setMentorDetails] = useState<IMentorDetails | null>(null);
-  const [statusUpdated, setStatusUpdated] = useState(false);
+  // const [statusUpdated, setStatusUpdated] = useState(false);
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const AdminMentorDetailsBody: React.FC = () => {
     
       if (updateResponse.status === 200 && updateResponse.data.message === "Status updated successfully.") {
         toast.success('Mentor status updated successfully.');
-        setStatusUpdated(true);
+        // setStatusUpdated(true);
     
         const updatedResponse = await apiClientAdmin.get(`${LOCALHOST_URL}/api/admin/getMentorDetails`, {
           params: { id }

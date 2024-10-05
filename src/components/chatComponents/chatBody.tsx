@@ -34,7 +34,7 @@ interface RootState {
 }
 
 const ENDPOINT = LOCALHOST_URL;
-let socket: any, selectedChatCompare: any;
+let socket: any
 
 const ChatBody: React.FC<{ user: User }> = ({ user }) => {
   const navigate = useNavigate();
@@ -82,7 +82,6 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
           const response = await apiClientMentee.get<Message[]>(`${LOCALHOST_URL}/api/message/${selectedChat._id}`);
           setMessages(response.data);
           socket.emit('join chat', selectedChat._id);
-          selectedChatCompare = selectedChat;
         } catch (error) {
           console.error("Error fetching messages:", error);
         } finally {
