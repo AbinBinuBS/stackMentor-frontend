@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
-import apiClient from '../../../services/apiClient';
 import { LOCALHOST_URL } from '../../../constants/constants';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import apiClientAdmin from '../../../services/apiClientAdmin';
 
 interface IQuestion {
   _id: string;
@@ -28,7 +28,7 @@ const AdminQABody: React.FC = () => {
 
   const fetchQuestions = async () => {
     try {
-      const { data } = await apiClient.get(`${LOCALHOST_URL}/api/admin/getAllQuestions`);
+      const { data } = await apiClientAdmin.get(`${LOCALHOST_URL}/api/admin/getAllQuestions`);
       setQuestions(data.questions);
     } catch (error) {
       if (error instanceof Error) {
@@ -47,7 +47,7 @@ const AdminQABody: React.FC = () => {
 
   const handleEditSubmit = async (values: { answerText: string }) => {
     try {
-      await apiClient.put(`${LOCALHOST_URL}/api/admin/editAnswer`, {
+      await apiClientAdmin.put(`${LOCALHOST_URL}/api/admin/editAnswer`, {
         questionId: selectedQuestion?._id,
         answer: values.answerText,
       });
@@ -72,7 +72,7 @@ const AdminQABody: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        await apiClient.delete(`${LOCALHOST_URL}/api/admin/removeQuestion/${questionId}`);
+        await apiClientAdmin.delete(`${LOCALHOST_URL}/api/admin/removeQuestion/${questionId}`);
         Swal.fire(
           'Deleted!',
           'The question has been removed.',

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store'; 
+import { useDispatch } from 'react-redux';
+// import { RootState } from '../../redux/store'; 
 import { adminLogout } from '../../redux/adminSlice'; 
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -10,9 +10,9 @@ const AdminHeader: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const dispatch = useDispatch();
-  const { accessToken } = useSelector((state: RootState) => state.admin);
+  // const { accessToken } = useSelector((state: RootState) => state.admin);
 
-  const adminName = accessToken ? JSON.parse(atob(accessToken.split('.')[1])).name : '';
+  // const adminName = accessToken ? JSON.parse(atob(accessToken.split('.')[1])).name : '';
 
   useEffect(() => {
     const handleScroll = () => {

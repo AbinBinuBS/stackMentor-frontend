@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { ChevronDown, ChevronUp, Plus, Calendar, Clock, Calendar as CalendarIcon } from "lucide-react";
@@ -117,7 +117,7 @@ const CommunityMeetBody = () => {
       console.log("Response data:", data);
       toast.success("Community meet created successfully!");
       setIsModalOpen(false);
-      fetchMeetData(); // Refresh the list after creating a new meet
+      fetchMeetData(); 
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

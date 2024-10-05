@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaTachometerAlt, FaUsers, FaChalkboardTeacher, FaQuestionCircle, FaUsersCog, FaChartLine } from 'react-icons/fa';
+import { FaTachometerAlt, FaUsers, FaChalkboardTeacher, FaQuestionCircle, FaUsersCog } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 
 const AdminDashboardSidebar: React.FC = () => {

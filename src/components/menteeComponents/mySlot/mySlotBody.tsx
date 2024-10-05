@@ -20,8 +20,8 @@ interface Slot {
   price: number;
   mentorData: MentorData;
   status: string;
-  roomId:string;
-  isAllowed : boolean;
+  roomId: string;
+  isAllowed: boolean;
 }
 
 interface RescheduleOption {
@@ -51,8 +51,6 @@ const MySlotBody: React.FC = () => {
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [rescheduleOptions, setRescheduleOptions] = useState<RescheduleOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [slotsPerPage] = useState(5);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
@@ -67,7 +65,7 @@ const MySlotBody: React.FC = () => {
   const fetchSlots = async () => {
     setIsLoading(true);
     try {
-      let response = await apiClientMentee.get<{ bookedSlot: Slot[] }>( `${LOCALHOST_URL}/api/mentees/getBookedSlots`);
+      let response = await apiClientMentee.get<{ bookedSlot: Slot[] }>(`${LOCALHOST_URL}/api/mentees/getBookedSlots`);
       setSlots(response.data.bookedSlot);
     } catch (error) {
       console.error("Error fetching slots:", error);
@@ -75,8 +73,6 @@ const MySlotBody: React.FC = () => {
       setIsLoading(false);
     }
   };
-
- 
 
   const handleReschedule = async (slot: Slot) => {
     setSelectedSlot(slot);
@@ -159,33 +155,25 @@ const MySlotBody: React.FC = () => {
     }
   };
 
-
-  const handleVedioCall = (slot:Slot) =>{
-    try{
-      navigate(`/room/${slot.roomId}`)
-    }catch(error){
-      console.log(error)
+  const handleVedioCall = (slot: Slot) => {
+    try {
+      navigate(`/room/${slot.roomId}`);
+    } catch (error) {
+      console.log(error);
     }
-  }
-
-  const indexOfLastSlot = currentPage * slotsPerPage;
-  const indexOfFirstSlot = indexOfLastSlot - slotsPerPage;
-
-  const currentSlots = slots.slice(indexOfFirstSlot, indexOfLastSlot);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  };
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-8">
+    <div className="w-full max-w-4xl mx-auto mt-32">
       <h1 className="text-2xl font-bold mb-4">My Slots</h1>
-      <div className="bg-white shadow-lg rounded-lg p-6 h-[600px]">
+      <div className="bg-white shadow-lg rounded-lg p-6 h-[500px]">
         <div className="h-full overflow-y-auto pr-4">
           {isLoading ? (
             <div className="flex justify-center items-center h-full">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
             </div>
-          ) : currentSlots.length > 0 ? (
-            currentSlots.map((slot) => (
+          ) : slots.length > 0 ? (
+            slots.map((slot) => (
               <div key={slot._id} className="bg-white shadow-md rounded-lg p-4 mb-4">
                 <div className="flex items-start">
                   <img
@@ -266,19 +254,6 @@ const MySlotBody: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="mt-4 flex justify-center">
-        {Array.from({ length: Math.ceil(slots.length / slotsPerPage) }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => paginate(i + 1)}
-            className={`mx-1 px-3 py-1 rounded ${
-              currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
 
       {isRescheduleModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -339,7 +314,7 @@ const MySlotBody: React.FC = () => {
         </div>
       )}
 
-{showCancelConfirmation && (
+      {showCancelConfirmation && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg w-full max-w-md">
             <h2 className="text-2xl font-bold mb-4">Confirm Cancellation</h2>
@@ -362,7 +337,7 @@ const MySlotBody: React.FC = () => {
         </div>
       )}
 
-      {showSuccessMessage && (
+{showSuccessMessage && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-8 rounded-lg max-w-md w-full shadow-2xl">
             <h2 className="text-3xl font-bold mb-4 text-center text-green-600">🎉 Success! 🎉</h2>

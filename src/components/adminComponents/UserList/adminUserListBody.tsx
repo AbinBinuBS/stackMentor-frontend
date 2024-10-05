@@ -3,7 +3,6 @@ import { LOCALHOST_URL } from '../../../constants/constants';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import Swal from 'sweetalert2'; 
-import { useNavigate } from 'react-router-dom';
 import apiClientAdmin from '../../../services/apiClientAdmin';
 
 const ITEMS_PER_PAGE = 8;
@@ -20,7 +19,6 @@ const AdminUserListBody: React.FC = () => {
   const [users, setUsers] = useState<IUserData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true); 
-  const navigate = useNavigate();
   
   useEffect(() => {
     fetchUserList();

@@ -7,7 +7,6 @@ import MenteeSingleMentorBody from "../../components/menteeComponents/mentorSing
 import MenteeSingleMentorSidebar from "../../components/menteeComponents/mentorSinglepage/menteeSingleMentorSidebar";
 import { LOCALHOST_URL } from '../../constants/constants';
 import { IMentorVerification, ISlot } from '../../interfaces/ImenteeInferfaces';
-import { ObjectId } from 'mongoose';
 import toast from 'react-hot-toast';
 
 const MenteeSignleMentorPage: React.FC = () => {
@@ -47,7 +46,7 @@ const MenteeSignleMentorPage: React.FC = () => {
         getMentorData();
     }, [id]);
 
-    const updateSlotStatus = async (sessionId: ObjectId) => {
+    const updateSlotStatus = async () => {
         try {
             const response = await axios.get(`${LOCALHOST_URL}/api/mentees/getMentorData/${id}`);
             if (response.data.message === "Success") {

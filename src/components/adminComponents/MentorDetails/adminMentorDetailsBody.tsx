@@ -95,7 +95,6 @@ const AdminMentorDetailsBody: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      // Update mentor status
       const updateResponse = await apiClientAdmin.post(`${LOCALHOST_URL}/api/admin/updateMentorStatus`, {
         id,
         status: verificationStatus

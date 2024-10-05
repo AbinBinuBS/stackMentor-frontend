@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import axios, { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig } from "axios";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { LOCALHOST_URL } from "../../../constants/constants";
 import { mentorVerifyValidation } from "../../../validations/mentorValidation";
 import { MentorVerifyFormValues } from "../../../interfaces/mentorInterfaces";
@@ -14,7 +13,6 @@ import apiClient from "../../../services/apiClient";
 const MentorVerifyBody: React.FC = () => {
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(false);
-    const navigate = useNavigate();
     const { accessToken } = useSelector((state: RootState) => state.mentor);
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
 

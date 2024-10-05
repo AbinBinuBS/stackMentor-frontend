@@ -61,12 +61,6 @@ const MentorHeader: React.FC = () => {
             Home
           </button>
           <button
-            onClick={() => navigate('/qa')}
-            className="text-purple-600 hover:text-purple-800 font-semibold"
-          >
-            Q & A
-          </button>
-          <button
             onClick={() => navigate('/mentor/account')}
             className="text-purple-600 hover:text-purple-800 font-semibold"
           >

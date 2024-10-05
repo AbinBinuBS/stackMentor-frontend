@@ -1,11 +1,11 @@
 import React from 'react';
 import { IMentorVerification } from '../../../interfaces/ImenteeInferfaces';
 
-interface MentorInfo {
-    name: string;
-    image: string;
-    experience: string;
-}
+// interface MentorInfo {
+//     name: string;
+//     image: string;
+//     experience: string;
+// }
 
 interface MenteeSingleMentorSidebarProps {
     mentor:IMentorVerification | null

@@ -66,8 +66,8 @@ const AdminHeaderSideHeader: React.FC = () => {
       {
         label: 'Revenue',
         data: monthlyRevenue,
-        borderColor: 'rgba(29, 78, 216, 1)',
-        backgroundColor: 'rgba(29, 78, 216, 0.2)',
+        borderColor: 'rgba(128, 0, 128, 1)', 
+        backgroundColor: 'rgba(128, 0, 128, 0.2)',
         borderWidth: 2,
         fill: true,
       },
@@ -79,7 +79,7 @@ const AdminHeaderSideHeader: React.FC = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false, // Hide legend to save space
+        display: false,
       },
       tooltip: {
         callbacks: {
@@ -97,7 +97,7 @@ const AdminHeaderSideHeader: React.FC = () => {
           color: 'rgba(0, 0, 0, 0.6)',
           maxRotation: 0,
           autoSkip: true,
-          maxTicksLimit: 6, // Limit the number of x-axis labels
+          maxTicksLimit: 6, 
         },
       },
       y: {
@@ -109,7 +109,7 @@ const AdminHeaderSideHeader: React.FC = () => {
         ticks: {
           color: 'rgba(0, 0, 0, 0.6)',
           callback: (value: number) => formatIndianCurrency(value),
-          maxTicksLimit: 5, // Limit the number of y-axis labels
+          maxTicksLimit: 5,
         },
       },
     },
@@ -121,15 +121,15 @@ const AdminHeaderSideHeader: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
         <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center">
           <span className="text-sm font-medium text-gray-700">Total Revenue</span>
-          <span className="text-lg font-bold text-blue-600">{formatIndianCurrency(totalRevenue)}</span>
+          <span className="text-lg font-bold text-purple-600">{formatIndianCurrency(totalRevenue)}</span>
         </div>
         <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center">
           <span className="text-sm font-medium text-gray-700">Mentors</span>
-          <span className="text-lg font-bold text-blue-600">{mentorCount}</span>
+          <span className="text-lg font-bold text-purple-600">{mentorCount}</span>
         </div>
         <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center">
           <span className="text-sm font-medium text-gray-700">Mentees</span>
-          <span className="text-lg font-bold text-blue-600">{menteeCount}</span>
+          <span className="text-lg font-bold text-purple-600">{menteeCount}</span>
         </div>
       </div>
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">

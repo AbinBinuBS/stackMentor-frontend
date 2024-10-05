@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { FaArrowRight, FaArrowLeft, FaSearch } from 'react-icons/fa';
 import { LOCALHOST_URL } from '../../../constants/constants';
