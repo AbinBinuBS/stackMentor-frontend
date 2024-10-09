@@ -60,7 +60,7 @@ const MenteeLoginBody = () => {
 		});
 
 	const handleGoogleAuthentication = () => {
-		window.location.href = `${LOCALHOST_URL}/auth`;
+		window.location.href = "https://999bookstore.online/auth";
 	};
 
 	const togglePasswordVisibility = () => {
