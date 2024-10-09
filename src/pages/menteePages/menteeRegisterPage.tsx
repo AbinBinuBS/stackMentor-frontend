@@ -1,14 +1,13 @@
-import MenteeHeader from "../../components/commonComponents/menteeHeader"
-import MenteeRedisterBody from "../../components/menteeComponents/Register/menteeRegisterBody"
+import MenteeHeader from "../../components/commonComponents/menteeHeader";
+import MenteeRedisterBody from "../../components/menteeComponents/Register/menteeRegisterBody";
 
+const MenteeRegister = () => {
+	return (
+		<>
+			<MenteeHeader />
+			<MenteeRedisterBody />
+		</>
+	);
+};
 
-const MenteeRegister = () =>{
-    return (
-        <>
-            <MenteeHeader/>
-            <MenteeRedisterBody/>
-        </>
-    )
-}
-
-export default MenteeRegister
+export default MenteeRegister;

@@ -1,13 +1,13 @@
-import MenteeHeader from "../../components/commonComponents/menteeHeader"
-import MenteeForgotPasswordBody from "../../components/menteeComponents/forgotPassword/menteeForgotPassword"
+import MenteeHeader from "../../components/commonComponents/menteeHeader";
+import MenteeForgotPasswordBody from "../../components/menteeComponents/forgotPassword/menteeForgotPassword";
 
-const MenteeForgotPassword = () =>{
-    return(
-        <>
-            <MenteeHeader/>
-            <MenteeForgotPasswordBody/>
-        </>
-    )
-}
+const MenteeForgotPassword = () => {
+	return (
+		<>
+			<MenteeHeader />
+			<MenteeForgotPasswordBody />
+		</>
+	);
+};
 
-export default MenteeForgotPassword
+export default MenteeForgotPassword;

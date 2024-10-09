@@ -5,11 +5,9 @@ import apiClientMentee from '../../services/apiClientMentee';
 import { LOCALHOST_URL } from '../../constants/constants';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { ISession } from '../../interfaces/ImenteeInferfaces';
 
-interface ISession {
-  id: string;
-  name: string;
-}
+
 
 const RoomPage = () => {
   const [userData, setUserData] = useState<ISession | null>(null);

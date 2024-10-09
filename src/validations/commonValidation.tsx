@@ -81,6 +81,13 @@ export const resetPasswordValidation = Yup.object({
 });
 
 
-
+export const validationSchema = Yup.object().shape({
+  title: Yup.string()
+    .min(15, 'Title must be at least 15 characters')
+    .required('Title is required'),
+  body: Yup.string()
+    .min(220, 'Body must be at least 220 characters')
+    .required('Body is required'),
+});
 
 

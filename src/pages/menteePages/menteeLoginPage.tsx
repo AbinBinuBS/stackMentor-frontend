@@ -1,13 +1,13 @@
-import MenteeHeader from "../../components/commonComponents/menteeHeader"
-import MenteeLoginBody from "../../components/menteeComponents/menteeLogin/menteeLoginBody"
+import MenteeHeader from "../../components/commonComponents/menteeHeader";
+import MenteeLoginBody from "../../components/menteeComponents/menteeLogin/menteeLoginBody";
 
-const MenteeLogin = () =>{
-    return(
-        <>
-            <MenteeHeader/>
-            <MenteeLoginBody/>
-        </>
-    )
-}
+const MenteeLogin = () => {
+	return (
+		<>
+			<MenteeHeader />
+			<MenteeLoginBody />
+		</>
+	);
+};
 
-export default MenteeLogin
+export default MenteeLogin;

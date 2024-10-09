@@ -58,3 +58,80 @@ export interface IMentorVerification {
     onSlotUpdate: (sessionId: ObjectId) => void;
     onBackClick?: () => void; 
 }
+
+
+export interface ISession {
+  id: string;
+  name: string;
+}
+
+export interface FormValues {
+  title: string;
+  body: string;
+}
+
+
+export interface ICommunityMeet {
+  _id: string;
+  date: Date;
+  startTime: string;
+  endTime: string;
+  about: string;
+  mentorInfo: {
+    _id: string;
+    name: string;
+    image: string;
+  };
+  RoomId: string;
+  image: string;
+  stack: string;
+}
+
+export interface MenteeSingleMentorSidebarProps {
+  mentor:IMentorVerification | null
+}
+
+export interface MentorData {
+  _id: string;
+  name: string;
+  image: string;
+}
+
+export interface Slot {
+  _id: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  price: number;
+  mentorData: MentorData;
+  status: string;
+  roomId: string;
+  isAllowed: boolean;
+}
+
+export interface RescheduleOption {
+  _id: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  price: number;
+  isBooked: boolean;
+}
+
+export interface ApiResponse {
+  availableSlots: RescheduleOption[];
+  message: string;
+}
+
+
+export interface QASidebarProps {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+
+export interface IWallet {
+  _id:string;
+  name:string;
+  wallet:string;
+}
