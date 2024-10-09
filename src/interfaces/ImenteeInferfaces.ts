@@ -38,3 +38,23 @@ export interface IMentorVerification {
       refreshToken : string;
     }
   }
+
+
+  export interface Mentor {
+    _id: string;
+    name: string;
+    mentorId: string;
+    image?: string;
+    about?: string;
+    yearsOfExperience: number;
+  }
+
+
+  export type Level = 'beginner' | 'intermediate' | 'expert';
+ 
+
+  export interface MenteeSingleMentorBodyProps {
+    slots: ISlot[] | null;
+    onSlotUpdate: (sessionId: ObjectId) => void;
+    onBackClick?: () => void; 
+}

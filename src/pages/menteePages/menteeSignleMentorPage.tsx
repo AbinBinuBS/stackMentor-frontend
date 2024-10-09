@@ -62,7 +62,7 @@ const MenteeSignleMentorPage: React.FC = () => {
     };
 
     const handleGoHome = () => {
-        navigate('/'); 
+        navigate('/');
     };
 
     if (isLoading) {
@@ -86,8 +86,8 @@ const MenteeSignleMentorPage: React.FC = () => {
                             <Home className="mx-auto mb-4 text-red-500" size={48} />
                             <h2 className="text-2xl font-bold text-gray-800 mb-2">Oops! Something went wrong</h2>
                             <p className="text-lg text-gray-600 mb-4">
-                                {error === "Internal Server Error" 
-                                    ? "We're experiencing some technical difficulties." 
+                                {error === "Internal Server Error"
+                                    ? "We're experiencing some technical difficulties."
                                     : error}
                             </p>
                             <button
@@ -110,17 +110,17 @@ const MenteeSignleMentorPage: React.FC = () => {
                 <div className="w-full max-w-6xl">
                     {slots && slots.length > 0 ? (
                         <div className="flex mt-16">
-                            <main className="w-3/4  p-6">
+                            <main className="w-full lg:w-3/4 p-6">
                                 <MenteeSingleMentorBody slots={slots} onSlotUpdate={updateSlotStatus} />
                             </main>
-                            <aside className="w-1/4 p-6 pt-16">
+                            <aside className="hidden lg:block lg:w-1/4 p-6 pt-16">
                                 <MenteeSingleMentorSidebar mentor={mentor} />
                             </aside>
                         </div>
                     ) : (
                         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                             <div className="p-4 border-b border-gray-200">
-                                <button 
+                                <button
                                     onClick={handleGoBack}
                                     className="text-[#1D2B6B] hover:text-[#2A3F7E] transition duration-300"
                                     aria-label="Go back"

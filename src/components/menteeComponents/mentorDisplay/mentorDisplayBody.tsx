@@ -3,20 +3,13 @@ import { FaArrowRight, FaArrowLeft, FaSearch } from 'react-icons/fa';
 import { LOCALHOST_URL } from '../../../constants/constants';
 import { useNavigate } from 'react-router-dom';
 import apiClientMentee from '../../../services/apiClientMentee';
+import { Level, Mentor } from '../../../interfaces/ImenteeInferfaces';
 
-type Level = 'beginner' | 'intermediate' | 'expert';
 
-interface Mentor {
-  _id: string;
-  name: string;
-  mentorId: string;
-  image?: string;
-  about?: string;
-  yearsOfExperience: number;
-}
+
 
 const MentorDisplayBody: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [level, setLevel] = useState<Level | null>(() => {
     const savedLevel = localStorage.getItem('selectedLevel');
     return (savedLevel as Level | null) || null;
@@ -29,7 +22,7 @@ const MentorDisplayBody: React.FC = () => {
     setIsLoading(true);
     try {
       const response = await apiClientMentee.get(`${LOCALHOST_URL}/api/mentees/getMentors?level=${selectedLevel}`);
-      console.log("Response data:", response.data);
+      console.log('Response data:', response.data);
 
       if (Array.isArray(response.data.mentorData)) {
         setMentors(response.data.mentorData);
@@ -74,20 +67,23 @@ const MentorDisplayBody: React.FC = () => {
     window.location.hash = '';
   };
 
-  const handleMentorDetails = (mentorId:string) =>{
-    navigate(`/mentorDetails/${mentorId}`)
-  }
+  const handleMentorDetails = (mentorId: string) => {
+    navigate(`/mentorDetails/${mentorId}`);
+  };
 
   const filteredMentors = Array.isArray(mentors)
-    ? mentors.filter(mentor =>
-        mentor.about?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        mentor.mentorId.toLowerCase().includes(searchTerm.toLowerCase())
+    ? mentors.filter(
+        mentor =>
+          mentor.about?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          mentor.mentorId.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-md p-4 ${!level ? 'h-[350px]' : 'h-[500px]'} w-[700px] mx-auto flex flex-col`}
+      className={`bg-white rounded-lg shadow-md p-4 w-full mx-auto flex flex-col md:max-w-[90%] lg:max-w-[85%] xl:max-w-[80%] ${
+        !level ? 'mt-16' : '' 
+      }`}
     >
       {!level ? (
         <>
@@ -164,11 +160,11 @@ const MentorDisplayBody: React.FC = () => {
                             </div>
                           </div>
                           <div className="text-[#1D2B6B] hover:text-[#2A3F7E] transition duration-300 ml-3">
-                          <button
-                            onClick={()=>handleMentorDetails(mentor.mentorId)}
-                            className="text-[#1D2B6B] hover:text-[#2A3F7E] transition duration-300"
-                          >
-                            <FaArrowRight size={20} />
+                            <button
+                              onClick={() => handleMentorDetails(mentor.mentorId)}
+                              className="text-[#1D2B6B] hover:text-[#2A3F7E] transition duration-300"
+                            >
+                              <FaArrowRight size={20} />
                             </button>
                           </div>
                         </div>

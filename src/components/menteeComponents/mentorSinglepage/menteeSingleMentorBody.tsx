@@ -1,19 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import { ISlot } from "../../../interfaces/ImenteeInferfaces";
+import { ISlot, MenteeSingleMentorBodyProps } from "../../../interfaces/ImenteeInferfaces";
 import { LOCALHOST_URL } from "../../../constants/constants";
 import toast from "react-hot-toast";
 import apiClientMentee from "../../../services/apiClientMentee";
-import { ObjectId } from "mongoose";
 import { ArrowLeft } from 'lucide-react';
 import Swal from 'sweetalert2'; 
 
-interface MenteeSingleMentorBodyProps {
-    slots: ISlot[] | null;
-    onSlotUpdate: (sessionId: ObjectId) => void;
-    onBackClick?: () => void; 
-}
+
 
 const MenteeSingleMentorBody: React.FC<MenteeSingleMentorBodyProps> = ({
     slots,
@@ -271,8 +266,9 @@ const handlePaymentMethodSelection = async (method: 'stripe' | 'wallet') => {
                     <span className="ml-2">Back</span>
                 </button>
             </div>
-            <table className="w-full border-collapse">
-                <thead>
+            <div className="overflow-x-auto">
+                <table className="w-full border-collapse min-w-[640px]">
+                    <thead>
                     <tr className="bg-gray-100">
                         <th className="border p-2">Date</th>
                         <th className="border p-2">Time</th>
@@ -280,45 +276,46 @@ const handlePaymentMethodSelection = async (method: 'stripe' | 'wallet') => {
                         <th className="border p-2">Status</th>
                         <th className="border p-2">Action</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     {currentSessions.map((session, index) => (
                         <tr key={index} className="border-b">
-                            <td className="border p-2 text-center">
-                                {new Date(session.date).toDateString()}
-                            </td>
-                            <td className="border p-2 text-center">
-                                {convertTo12HourFormat(session.startTime)} - {convertTo12HourFormat(session.endTime)}
-                            </td>
-                            <td className="border p-2 text-center">₹{session.price}</td>
-                            <td className="border p-2 text-center">
-                                <span
-                                    className={`px-2 py-1 rounded ${
-                                        session.isBooked
-                                            ? "bg-red-200 text-red-800"
-                                            : "bg-green-200 text-green-800"
-                                    }`}
-                                >
-                                    {session.isBooked ? "Booked" : "Available"}
-                                </span>
-                            </td>
-                            <td className="border p-2 text-center">
-                                <button
-                                    className={`px-4 py-2 rounded ${
-                                        !session.isBooked
-                                            ? "bg-gradient-to-r from-[#1D2B6B] to-[#142057] hover:from-[#2A3F7E] hover:to-[#0A102E] text-white"
-                                            : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                                    }`}
-                                    onClick={() => !session.isBooked && handleBookSession(session)}
-                                    disabled={session.isBooked}
-                                >
-                                    {session.isBooked ? "Booked" : "Book"}
-                                </button>
-                            </td>
+                        <td className="border p-2 text-center">
+                            {new Date(session.date).toDateString()}
+                        </td>
+                        <td className="border p-2 text-center">
+                            {convertTo12HourFormat(session.startTime)} - {convertTo12HourFormat(session.endTime)}
+                        </td>
+                        <td className="border p-2 text-center">₹{session.price}</td>
+                        <td className="border p-2 text-center">
+                            <span
+                            className={`px-2 py-1 rounded ${
+                                session.isBooked
+                                ? "bg-red-200 text-red-800"
+                                : "bg-green-200 text-green-800"
+                            }`}
+                            >
+                            {session.isBooked ? "Booked" : "Available"}
+                            </span>
+                        </td>
+                        <td className="border p-2 text-center">
+                            <button
+                            className={`px-4 py-2 rounded ${
+                                !session.isBooked
+                                ? "bg-gradient-to-r from-[#1D2B6B] to-[#142057] hover:from-[#2A3F7E] hover:to-[#0A102E] text-white"
+                                : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                            }`}
+                            onClick={() => !session.isBooked && handleBookSession(session)}
+                            disabled={session.isBooked}
+                            >
+                            {session.isBooked ? "Booked" : "Book"}
+                            </button>
+                        </td>
                         </tr>
                     ))}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
             <div className="mt-4">
                 <button
                     className="px-4 py-2 bg-[#1D2B6B] text-white rounded-md"
