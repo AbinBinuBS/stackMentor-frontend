@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { signupValidation } from "../../../validations/commonValidation";
+import { LOCALHOST_URL } from "../../../constants/constants";
 
 const initialValues = {
 	name: "",
@@ -20,7 +21,7 @@ const MenteeRegisterBody = () => {
 		onSubmit: async (value) => {
 			try {
 				const response = await axios.post(
-					"http://localhost:3001/api/mentees/register",
+					`${LOCALHOST_URL}/api/mentees/register`,
 					value
 				);
 				if (response.data.message == "OTP Send Successfully") {

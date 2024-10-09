@@ -89,7 +89,7 @@ const CommunityMeetBody = () => {
 
 	const NoDataMessage = () => (
 		<div className="bg-white p-8 rounded-lg shadow-md text-center">
-			<CalendarIcon className="mx-auto h-16 w-16 text-violet-500 mb-4" />
+			<CalendarIcon className="mx-auto h-16 w-16 text-[#1D2B6B] mb-4" />
 			<h3 className="text-2xl font-semibold text-gray-800 mb-2">
 				No Community Meets Available
 			</h3>
@@ -101,7 +101,7 @@ const CommunityMeetBody = () => {
 
 	const LoadingMessage = () => (
 		<div className="flex justify-center items-center h-64">
-			<Loader className="w-8 h-8 text-violet-500 animate-spin" />
+			<Loader className="w-8 h-8 text-[#1D2B6B] animate-spin" />
 			<span className="ml-2 text-lg text-gray-600">
 				Loading community meets...
 			</span>
@@ -155,7 +155,7 @@ const CommunityMeetBody = () => {
 								</div>
 
 								<div className="mb-4">
-									<p className="text-sm font-medium text-violet-600 mb-2">
+									<p className="text-sm font-medium text-[#1D2B6B] mb-2">
 										Tech Stack: {meet.stack}
 									</p>
 									<div className="text-gray-700 break-words">
@@ -165,7 +165,7 @@ const CommunityMeetBody = () => {
 									</div>
 									<button
 										onClick={() => toggleExpand(meet._id)}
-										className="text-violet-500 text-sm font-medium flex items-center hover:underline mt-2 focus:outline-none"
+										className="text-[#1D2B6B] hover:text-[#2A3F7E] text-sm font-medium flex items-center hover:underline mt-2 focus:outline-none"
 									>
 										{expandedMeetId === meet._id ? (
 											<>
@@ -194,7 +194,7 @@ const CommunityMeetBody = () => {
 								{meetStatus.status === "ongoing" ? (
 									<button
 										onClick={() => handleVideoCall(meet.RoomId)}
-										className="w-full px-4 py-2 bg-violet-500 text-white rounded-md hover:bg-violet-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-opacity-50"
+										className="w-full px-4 py-2 bg-[#1D2B6B] text-white rounded-md hover:bg-[#2A3F7E] transition duration-300 focus:outline-none focus:ring-2 focus:ring-[#1D2B6B] focus:ring-opacity-50"
 									>
 										Join Meet
 									</button>

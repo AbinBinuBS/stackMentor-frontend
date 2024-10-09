@@ -60,7 +60,7 @@ const MenteeLoginBody = () => {
 		});
 
 	const handleGoogleAuthentication = () => {
-		window.location.href = "http://localhost:3001/auth";
+		window.location.href = `${LOCALHOST_URL}/auth`;
 	};
 
 	const togglePasswordVisibility = () => {
