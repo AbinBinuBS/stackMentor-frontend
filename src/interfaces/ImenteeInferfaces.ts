@@ -30,3 +30,11 @@ export interface IMentorVerification {
     menteeId?:{_id:string,name:string} | undefined
     mentorId?: {_id:string,name:string} | undefined
   }
+
+
+  export interface StoreData{
+    mentee:{
+      accessToken : string;
+      refreshToken : string;
+    }
+  }

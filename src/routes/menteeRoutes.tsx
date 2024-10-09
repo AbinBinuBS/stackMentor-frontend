@@ -18,6 +18,7 @@ import QAPage from "../pages/menteePages/MenteeQ&APage";
 import AskQuestionPage from "../pages/menteePages/menteeAskQuestions";
 import CommunityMeetPage from "../pages/menteePages/communityMeetPage";
 import GroupCallPage from "../pages/menteePages/groupCallPage";
+import SelectingMentorOrMenteePage from "../pages/commonPages/selectingMentorOrMenteePage";
 
 const MenteeRoutes = () => {
   return (
@@ -39,6 +40,8 @@ const MenteeRoutes = () => {
       <Route path="/askQuestion" element={<MenteeLoginProtectiveCheck element={<AskQuestionPage />} />} />
       <Route path="/communityMeet" element={<MenteeLoginProtectiveCheck element={<CommunityMeetPage />} />} />
       <Route path="/community/room/:roomId" element={<MenteeLoginProtectiveCheck element={<GroupCallPage />} />} />
+      <Route path="/selectionLogin" element={<MenteeLogoutProtectiveCheck element={<SelectingMentorOrMenteePage />} />} />
+
     </Routes>
   );
 };

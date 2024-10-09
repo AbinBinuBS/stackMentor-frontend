@@ -1,24 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { menteeLogout } from '../../redux/menteeSlice';
-import { useSelector } from 'react-redux';
-
-
-interface StoreData{
-  mentee:{
-    accessToken : string;
-    refreshToken : string;
-  }
-}
+import { StoreData } from '../../interfaces/ImenteeInferfaces';
+import { Menu } from 'lucide-react';
 
 const MenteeHeader: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const accessToken = useSelector((state:StoreData)=>state.mentee.accessToken)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const accessToken = useSelector((state: StoreData) => state.mentee.accessToken);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,11 +32,15 @@ const MenteeHeader: React.FC = () => {
     navigate('/login');
   };
 
-  const openWallet = () =>{
-    navigate('/wallet')
-  }
+  const openWallet = () => {
+    navigate('/wallet');
+  };
 
-  
+  const NavItem = ({ text, onClick }: { text: string; onClick: () => void }) => (
+    <button onClick={onClick} className="text-black font-semibold py-2 px-4 hover:bg-gray-100 w-full text-left">
+      {text}
+    </button>
+  );
 
   return (
     <div
@@ -50,46 +48,25 @@ const MenteeHeader: React.FC = () => {
       style={{
         transitionDuration: '2s',
         transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-        padding: isScrolled ? '0' : '0.5rem', 
+        padding: isScrolled ? '0' : '0.5rem',
       }}
     >
       <header
-        className="bg-white shadow-xl transition-all"
+        className="bg-white shadow-xl transition-all w-full md:w-[90%]"
         style={{
           transitionDuration: '2s',
           transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-          padding: isScrolled ? '0.75rem' : '1.5rem', 
-          width: isScrolled ? '100%' : '90%',
+          padding: isScrolled ? '0.75rem' : '1.5rem',
           borderRadius: isScrolled ? '0' : '1rem',
         }}
       >
         <div className="flex items-center justify-between">
           <img src="/images/logo.png" alt="Logo" className="h-16" />
-          <nav className="flex items-center space-x-8">
-            <button
-              onClick={() => navigate('/')}
-              className="text-black font-semibold"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => navigate('/mentorList')}
-              className="text-black font-semibold"
-            >
-              Mentor
-            </button>
-            <button
-              onClick={() => navigate('/questionsAsked')}
-              className="text-black font-semibold"
-            >
-              Q&A
-            </button>
-            <button
-              onClick={() => navigate('/MySlot')}
-              className="text-black font-semibold"
-            >
-              My Slots
-            </button>
+          <nav className="hidden md:flex items-center space-x-8">
+            <NavItem text="Home" onClick={() => navigate('/')} />
+            <NavItem text="Mentor" onClick={() => navigate('/mentorList')} />
+            <NavItem text="Q&A" onClick={() => navigate('/questionsAsked')} />
+            <NavItem text="My Slots" onClick={() => navigate('/MySlot')} />
             <div className="relative">
               <button
                 className="text-black font-semibold"
@@ -113,33 +90,37 @@ const MenteeHeader: React.FC = () => {
               </button>
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-md">
-                  <button
-                    onClick={openWallet}
-                    className="block px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
-                  >
-                    Wallet
-                  </button>
+                  <NavItem text="Wallet" onClick={openWallet} />
                   {accessToken ? (
-                    <button
-                    onClick={handleLogout}
-                    className="block px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
-                  >
-                    Logout
-                  </button>
+                    <NavItem text="Logout" onClick={handleLogout} />
                   ) : (
-                  <button
-                    onClick={()=>navigate('/login')}
-                    className="block px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"
-                  >
-                    Login
-                  </button>
-                )}
-                  
+                    <NavItem text="Login" onClick={() => navigate('/selectionLogin')} />
+                  )}
                 </div>
               )}
             </div>
           </nav>
+          <button
+            className="md:hidden text-black"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <Menu size={24} />
+          </button>
         </div>
+        {isMenuOpen && (
+          <div className="md:hidden mt-4">
+            <NavItem text="Home" onClick={() => navigate('/')} />
+            <NavItem text="Mentor" onClick={() => navigate('/mentorList')} />
+            <NavItem text="Q&A" onClick={() => navigate('/questionsAsked')} />
+            <NavItem text="My Slots" onClick={() => navigate('/MySlot')} />
+            <NavItem text="Wallet" onClick={openWallet} />
+            {accessToken ? (
+              <NavItem text="Logout" onClick={handleLogout} />
+            ) : (
+              <NavItem text="Login" onClick={() => navigate('/selectionLogin')} />
+            )}
+          </div>
+        )}
       </header>
     </div>
   );
