@@ -1,27 +1,27 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; 
-import menteeReducer from './menteeSlice';
-import adminReducer from './adminSlice';
-import mentorReducer from './mentorSlice';
-import chatReducer from './chatSlice'; 
+import storage from "redux-persist/lib/storage";
+import menteeReducer from "./menteeSlice";
+import adminReducer from "./adminSlice";
+import mentorReducer from "./mentorSlice";
+import chatReducer from "./chatSlice";
 
 const rootReducer = combineReducers({
-  mentee: menteeReducer,
-  admin: adminReducer,
-  mentor: mentorReducer,
-  chat: chatReducer, 
+	mentee: menteeReducer,
+	admin: adminReducer,
+	mentor: mentorReducer,
+	chat: chatReducer,
 });
 
 const persistConfig = {
-  key: "root",
-  storage,
+	key: "root",
+	storage,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: persistedReducer,
+	reducer: persistedReducer,
 });
 
 export const persistor = persistStore(store);

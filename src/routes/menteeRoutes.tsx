@@ -21,29 +21,97 @@ import GroupCallPage from "../pages/menteePages/groupCallPage";
 import SelectingMentorOrMenteePage from "../pages/commonPages/selectingMentorOrMenteePage";
 
 const MenteeRoutes = () => {
-  return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<MenteeLogoutProtectiveCheck element={<MenteeLogin />} />} />
-      <Route path="/register" element={<MenteeLogoutProtectiveCheck element={<MenteeRegister />} />} />
-      <Route path="/forgotPassword" element={<MenteeLogoutProtectiveCheck element={<MenteeForgotPassword />} />} />
-      <Route path="/forgot-password-otp" element={<MenteeLogoutProtectiveCheck element={<MenteeForgotPasswordOtp />} />} />
-      <Route path="/reset-password" element={<MenteeLogoutProtectiveCheck element={<MenteeForgotPasswordReset />} />} />
-      <Route path="/otp" element={<MenteeLogoutProtectiveCheck element={<OtpPage />} />} />
-      <Route path="/mentorList" element={<MenteeLoginProtectiveCheck element={<MenteeDisplayMentorPage />} />} />
-      <Route path='/mentorDetails/:id' element={<MenteeLoginProtectiveCheck element={<MenteeSignleMentorPage/>}/>}/>
-      <Route path="/MySlot" element={<MenteeLoginProtectiveCheck element={<MenteeSlotBookedPage />} />} />
-      <Route path="/chat" element={<MenteeLoginProtectiveCheck element={<ChatPage />} />} />
-      <Route path="/wallet" element={<MenteeLoginProtectiveCheck element={<WalletPage />} />} />
-      <Route path="/room/:roomId" element={<MenteeLoginProtectiveCheck element={<RoomPage />} />} />
-      <Route path="/questionsAsked" element={<MenteeLoginProtectiveCheck element={<QAPage />} />} />
-      <Route path="/askQuestion" element={<MenteeLoginProtectiveCheck element={<AskQuestionPage />} />} />
-      <Route path="/communityMeet" element={<MenteeLoginProtectiveCheck element={<CommunityMeetPage />} />} />
-      <Route path="/community/room/:roomId" element={<MenteeLoginProtectiveCheck element={<GroupCallPage />} />} />
-      <Route path="/selectionLogin" element={<MenteeLogoutProtectiveCheck element={<SelectingMentorOrMenteePage />} />} />
-
-    </Routes>
-  );
+	return (
+		<Routes>
+			<Route path="/" element={<LandingPage />} />
+			<Route
+				path="/login"
+				element={<MenteeLogoutProtectiveCheck element={<MenteeLogin />} />}
+			/>
+			<Route
+				path="/register"
+				element={<MenteeLogoutProtectiveCheck element={<MenteeRegister />} />}
+			/>
+			<Route
+				path="/forgotPassword"
+				element={
+					<MenteeLogoutProtectiveCheck element={<MenteeForgotPassword />} />
+				}
+			/>
+			<Route
+				path="/forgot-password-otp"
+				element={
+					<MenteeLogoutProtectiveCheck element={<MenteeForgotPasswordOtp />} />
+				}
+			/>
+			<Route
+				path="/reset-password"
+				element={
+					<MenteeLogoutProtectiveCheck
+						element={<MenteeForgotPasswordReset />}
+					/>
+				}
+			/>
+			<Route
+				path="/otp"
+				element={<MenteeLogoutProtectiveCheck element={<OtpPage />} />}
+			/>
+			<Route
+				path="/mentorList"
+				element={
+					<MenteeLoginProtectiveCheck element={<MenteeDisplayMentorPage />} />
+				}
+			/>
+			<Route
+				path="/mentorDetails/:id"
+				element={
+					<MenteeLoginProtectiveCheck element={<MenteeSignleMentorPage />} />
+				}
+			/>
+			<Route
+				path="/MySlot"
+				element={
+					<MenteeLoginProtectiveCheck element={<MenteeSlotBookedPage />} />
+				}
+			/>
+			<Route
+				path="/chat"
+				element={<MenteeLoginProtectiveCheck element={<ChatPage />} />}
+			/>
+			<Route
+				path="/wallet"
+				element={<MenteeLoginProtectiveCheck element={<WalletPage />} />}
+			/>
+			<Route
+				path="/room/:roomId"
+				element={<MenteeLoginProtectiveCheck element={<RoomPage />} />}
+			/>
+			<Route
+				path="/questionsAsked"
+				element={<MenteeLoginProtectiveCheck element={<QAPage />} />}
+			/>
+			<Route
+				path="/askQuestion"
+				element={<MenteeLoginProtectiveCheck element={<AskQuestionPage />} />}
+			/>
+			<Route
+				path="/communityMeet"
+				element={<MenteeLoginProtectiveCheck element={<CommunityMeetPage />} />}
+			/>
+			<Route
+				path="/community/room/:roomId"
+				element={<MenteeLoginProtectiveCheck element={<GroupCallPage />} />}
+			/>
+			<Route
+				path="/selectionLogin"
+				element={
+					<MenteeLogoutProtectiveCheck
+						element={<SelectingMentorOrMenteePage />}
+					/>
+				}
+			/>
+		</Routes>
+	);
 };
 
 export default MenteeRoutes;

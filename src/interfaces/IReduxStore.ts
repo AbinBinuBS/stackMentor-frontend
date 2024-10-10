@@ -1,6 +1,4 @@
-
 export interface SliceState {
-    accessToken : string;
-    refreshToken : string;
+	accessToken: string;
+	refreshToken: string;
 }
-

@@ -67,7 +67,7 @@ const GroupCallPage = () => {
 						sharedLinks: [
 							{
 								name: "Copy Link",
-								url: `http://localhost:5173/room/${roomId}`,
+								url: `${LOCALHOST_URL}/room/${roomId}`,
 							},
 						],
 						scenario: {
@@ -79,7 +79,6 @@ const GroupCallPage = () => {
 					hasJoinedRoomRef.current = true;
 				} catch (error) {
 					toast.error("Failed to initialize meeting.");
-					console.error(error);
 				}
 			}
 		};

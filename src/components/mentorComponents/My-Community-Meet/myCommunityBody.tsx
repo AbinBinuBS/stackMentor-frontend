@@ -2,40 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Calendar, Clock, Calendar as CalendarIcon, ChevronDown, ChevronUp, Loader } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import Swal from "sweetalert2";
 import apiClient from "../../../services/apiClient";
 import { LOCALHOST_URL } from "../../../constants/constants";
-
-export interface ICommunityMeet {
-  _id: string;
-  date: Date;
-  startTime: string;
-  endTime: string;
-  about: string;
-  mentorInfo: {
-    _id: string;
-    name: string;
-    image: string;
-  };
-  RoomId: string;
-  image: string;
-  stack: string;
-}
-
-const cancelValidationSchema = Yup.object().shape({
-  reason: Yup.string()
-    .required("Reason is required")
-    .min(150, "Reason must be 150 characters or less"),
-});
+import { ICommunityMeet } from "../../../interfaces/mentorInterfaces";
 
 const MyCommunityBody: React.FC = () => {
   const [communityMeets, setCommunityMeets] = useState<ICommunityMeet[]>([]);
   const [expandedMeetId, setExpandedMeetId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMeetId, setSelectedMeetId] = useState<string | null>(null);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -73,43 +47,6 @@ const MyCommunityBody: React.FC = () => {
 
   const toggleExpand = (meetId: string) => {
     setExpandedMeetId(expandedMeetId === meetId ? null : meetId);
-  };
-
-  // const openCancelModal = (meetId: string) => {
-  //   setSelectedMeetId(meetId);
-  //   setIsModalOpen(true);
-  // };
-
-  const closeCancelModal = () => {
-    setSelectedMeetId(null);
-    setIsModalOpen(false);
-  };
-
-  const handleCancelMeet = async (reason: string) => {
-    if (!selectedMeetId) return;
-
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, cancel it!'
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await apiClient.put(`${LOCALHOST_URL}/api/mentor/cancelCommunityMeet/${selectedMeetId}`, {
-          data: { reason }
-        });
-        toast.success("Community meet cancelled successfully");
-        fetchMeetData();
-        closeCancelModal();
-      } catch (error) {
-        toast.error("Failed to cancel community meet");
-      }
-    }
   };
 
   const NoDataMessage: React.FC = () => (
@@ -176,12 +113,6 @@ const MyCommunityBody: React.FC = () => {
                       <span>{formatTime(meet.startTime)} - {formatTime(meet.endTime)}</span>
                     </div>
                   </div>
-                  {/* <button
-                    onClick={() => openCancelModal(meet._id)}
-                    className="ml-auto text-red-500 hover:text-red-600 focus:outline-none"
-                  >
-                    <XCircle className="w-5 h-5" />
-                  </button> */}
                 </div>
                 <div className="mb-4">
                   <p className="text-sm font-medium text-violet-600 mb-2">Tech Stack: {meet.stack}</p>
@@ -231,52 +162,6 @@ const MyCommunityBody: React.FC = () => {
           })
         )}
       </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-xl font-semibold mb-4">Cancel Community Meet</h2>
-            <Formik
-              initialValues={{ reason: '' }}
-              validationSchema={cancelValidationSchema}
-              onSubmit={(values) => handleCancelMeet(values.reason)}
-            >
-              {({ isSubmitting }) => (
-                <Form>
-                  <div className="mb-4">
-                    <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-1">Reason for cancellation</label>
-                    <Field
-                      as="textarea"
-                      id="reason"
-                      name="reason"
-                      rows={4}
-                      className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                      placeholder="Enter your reason here (max 150 characters)"
-                    />
-                    <ErrorMessage name="reason" component="div" className="text-red-500 text-sm mt-1" />
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      type="button"
-                      onClick={closeCancelModal}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                    >
-                      Close
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                    >
-                      {isSubmitting ? 'Cancelling...' : 'Cancel Meet'}
-                    </button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

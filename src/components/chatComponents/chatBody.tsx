@@ -6,32 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import apiClientMentee from '../../services/apiClientMentee';
 import { LOCALHOST_URL } from '../../constants/constants';
+import { Message, RootState, User } from '../../interfaces/IChatMenteeInterface';
+import toast from 'react-hot-toast';
 
-interface Message {
-  _id: string;
-  content: string;
-  sender: string;
-  senderModel: string;
-  chat: {
-    _id:string;
-    chatName:string;
-  }
-}
 
-interface User {
-  id: string;
-  name: string;
-  image: string;
-}
-
-interface RootState {
-  chat: {
-    selectedChat: {
-      _id: string;
-      mentor: User;
-    } | null;
-  };
-}
 
 const ENDPOINT = LOCALHOST_URL;
 let socket: any
@@ -52,14 +30,10 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
     if (!selectedChat || !user) return;
 
     socket = io(ENDPOINT);
-    console.log('User:', user);
-    console.log('Selected Chat:', selectedChat);
 
     socket.emit('setup', { _id: user.id });
     socket.on('connected', () => setSocketConnected(true));
     socket.on('message received', (newMessageReceived: Message) => {
-      console.log("chat info",selectedChat)
-      console.log("new message",newMessageReceived)
       if(selectedChat._id === newMessageReceived.chat._id){
         setMessages((prevMessages) => [...prevMessages, newMessageReceived]);
       }
@@ -83,7 +57,7 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
           setMessages(response.data);
           socket.emit('join chat', selectedChat._id);
         } catch (error) {
-          console.error("Error fetching messages:", error);
+          toast.error("somethingUnexpected happened")
         } finally {
           setIsLoading(false);
         }
@@ -138,7 +112,7 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
       setMessages((prevMessages) => [...prevMessages, response.data]);
       setNewMessage('');
     } catch (error) {
-      console.error("Error sending message:", error);
+      toast.error("somethingUnexpected happened")
     }
   };
 

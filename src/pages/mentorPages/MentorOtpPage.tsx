@@ -1,14 +1,13 @@
-import MentorSidebar from "../../components/commonComponents/mentorSidebar"
-import MentorOtpBody from "../../components/mentorComponents/Register/mentorOtpBody"
+import MentorSidebar from "../../components/commonComponents/mentorSidebar";
+import MentorOtpBody from "../../components/mentorComponents/Register/mentorOtpBody";
 
+const MentorOtpPage = () => {
+	return (
+		<div className="flex flex-col lg:flex-row w-full h-screen">
+			<MentorSidebar />
+			<MentorOtpBody />
+		</div>
+	);
+};
 
-const MentorOtpPage = () =>{
-    return(
-        <div className="flex flex-col lg:flex-row w-full h-screen">
-            <MentorSidebar/>
-            <MentorOtpBody/>
-        </div>
-    )
-}
-
-export default MentorOtpPage
+export default MentorOtpPage;

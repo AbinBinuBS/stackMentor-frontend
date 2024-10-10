@@ -9,19 +9,16 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { Slot } from "../../../interfaces/ImenteeInferfaces";
 
-
-
 const MentorMySlotBody: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 	const [slots, setSlots] = useState<Slot[]>([]);
-	const [ismentorAllowed,setIsMentorAllowed] = useState<boolean>()
-  	const [loading, setLoading] = useState(true);
-	const navigate = useNavigate()
+	const [ismentorAllowed, setIsMentorAllowed] = useState<boolean>();
+	const [loading, setLoading] = useState(true);
+	const navigate = useNavigate();
 	const slotsPerPage = 6;
 
 	useEffect(() => {
-
 		getSlots();
 	}, []);
 	const getSlots = async () => {
@@ -29,9 +26,9 @@ const MentorMySlotBody: React.FC = () => {
 			const response = await apiClient.get(
 				`${LOCALHOST_URL}/api/mentor/getSlots`
 			);
-			await new Promise(resolve => setTimeout(resolve, 1000));
-      		setLoading(false)
-			setIsMentorAllowed(true)
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+			setLoading(false);
+			setIsMentorAllowed(true);
 			if (response.data.message === "Slots sent successfully") {
 				setSlots(response.data.sloteData || []);
 			} else {
@@ -39,9 +36,12 @@ const MentorMySlotBody: React.FC = () => {
 			}
 		} catch (error) {
 			if (error instanceof Error) {
-				if (error.message === "Mentor is not verified. Please complete the verification process.") {
-					setIsMentorAllowed(false)
-        			setLoading(false)
+				if (
+					error.message ===
+					"Mentor is not verified. Please complete the verification process."
+				) {
+					setIsMentorAllowed(false);
+					setLoading(false);
 				} else {
 					toast.error(error.message);
 				}
@@ -96,9 +96,7 @@ const MentorMySlotBody: React.FC = () => {
 				);
 				if (response.data.message === "Slots deleted successfully") {
 					toast.success("Slot removed successfully");
-					setSlots((prevSlots) =>
-						prevSlots.filter((slot) => slot._id !== id)
-					);
+					setSlots((prevSlots) => prevSlots.filter((slot) => slot._id !== id));
 				} else if (response.data.message === "This slots already booked.") {
 					const cancelResult = await Swal.fire({
 						title: "Slot already booked",
@@ -118,7 +116,7 @@ const MentorMySlotBody: React.FC = () => {
 						);
 						if (cancelResponse.data.message === "Slot cancelled successfully") {
 							toast.success("Slot cancelled successfully");
-							getSlots()
+							getSlots();
 						} else {
 							toast.error(cancelResponse.data.message);
 						}
@@ -142,109 +140,113 @@ const MentorMySlotBody: React.FC = () => {
 
 	if (loading) {
 		return (
-		  <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
-			<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-			<p className="mt-4 text-lg font-semibold text-gray-700">Loading...</p>
-		  </div>
+			<div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+				<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+				<p className="mt-4 text-lg font-semibold text-gray-700">Loading...</p>
+			</div>
 		);
-	  }
+	}
 
 	return (
 		<div className="flex ml-16 flex-col justify-center items-center min-h-screen bg-gray-100 p-6">
 			{ismentorAllowed ? (
-			<div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg">
-				<h2 className="text-2xl font-bold mb-4">Mentoring Slots</h2>
-				<div className="mb-6">
-					<DatePicker
-						selected={selectedDate}
-						onChange={handleDateChange}
-						dateFormat="yyyy-MM-dd"
-						className="p-2 border border-gray-300 rounded"
-						placeholderText="Select a date"
-					/>
-				</div>
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-					{currentSlots.length > 0 ? (
-						currentSlots.map((slot) => {
-							const status = slot.bookedSlots[0]?.status; 
-							return (
-								<div
-									key={slot._id}
-									className="bg-purple-100 p-4 rounded-lg shadow-sm"
-								>
-									<h3 className="text-lg font-semibold mb-2">
-										Date: {formattedDate(slot.date)}
-									</h3>
-									<p className="text-gray-600">
-										Start: {formattedStartTime(slot.startTime)}
-									</p>
-									<p className="text-gray-600">
-										End: {formattedEndTime(slot.endTime)}
-									</p>
-									<div className="mt-2 space-x-2">
-										{status === "cancelled" ? (
-											<p className="text-red-500 font-bold">Cancelled</p>
-										) : status === "completed" ? (
-											<p className="text-green-500 font-bold">Completed</p>
-										) : (
-											<button
-												onClick={() => handleDelete(slot._id)}
-												className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
-											>
-												Remove
-											</button>
-										)}
+				<div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg">
+					<h2 className="text-2xl font-bold mb-4">Mentoring Slots</h2>
+					<div className="mb-6">
+						<DatePicker
+							selected={selectedDate}
+							onChange={handleDateChange}
+							dateFormat="yyyy-MM-dd"
+							className="p-2 border border-gray-300 rounded"
+							placeholderText="Select a date"
+						/>
+					</div>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+						{currentSlots.length > 0 ? (
+							currentSlots.map((slot) => {
+								const status = slot.bookedSlots[0]?.status;
+								return (
+									<div
+										key={slot._id}
+										className="bg-purple-100 p-4 rounded-lg shadow-sm"
+									>
+										<h3 className="text-lg font-semibold mb-2">
+											Date: {formattedDate(slot.date)}
+										</h3>
+										<p className="text-gray-600">
+											Start: {formattedStartTime(slot.startTime)}
+										</p>
+										<p className="text-gray-600">
+											End: {formattedEndTime(slot.endTime)}
+										</p>
+										<div className="mt-2 space-x-2">
+											{status === "cancelled" ? (
+												<p className="text-red-500 font-bold">Cancelled</p>
+											) : status === "completed" ? (
+												<p className="text-green-500 font-bold">Completed</p>
+											) : (
+												<button
+													onClick={() => handleDelete(slot._id)}
+													className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+												>
+													Remove
+												</button>
+											)}
+										</div>
 									</div>
-								</div>
-							);
-						})
-					) : (
-						<p className="text-center text-gray-500">
-							No slots available for the selected date.
-						</p>
-					)}
-				</div>
-				<div className="flex justify-center mt-6">
-					<button
-						onClick={() => paginate(currentPage - 1)}
-						disabled={currentPage === 1}
-						className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 text-gray-700"
-					>
-						Previous
-					</button>
-					{Array.from({ length: totalPages }, (_, i) => (
+								);
+							})
+						) : (
+							<p className="text-center text-gray-500">
+								No slots available for the selected date.
+							</p>
+						)}
+					</div>
+					<div className="flex justify-center mt-6">
 						<button
-							key={i}
-							onClick={() => paginate(i + 1)}
-							className={`mx-1 px-3 py-1 rounded ${
-								currentPage === i + 1
-									? "bg-purple-500 text-white"
-									: "bg-gray-200"
-							}`}
+							onClick={() => paginate(currentPage - 1)}
+							disabled={currentPage === 1}
+							className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 text-gray-700"
 						>
-							{i + 1}
+							Previous
 						</button>
-					))}
-					<button
-						onClick={() => paginate(currentPage + 1)}
-						disabled={currentPage === totalPages}
-						className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 text-gray-700"
-					>
-						Next
-					</button>
+						{Array.from({ length: totalPages }, (_, i) => (
+							<button
+								key={i}
+								onClick={() => paginate(i + 1)}
+								className={`mx-1 px-3 py-1 rounded ${
+									currentPage === i + 1
+										? "bg-purple-500 text-white"
+										: "bg-gray-200"
+								}`}
+							>
+								{i + 1}
+							</button>
+						))}
+						<button
+							onClick={() => paginate(currentPage + 1)}
+							disabled={currentPage === totalPages}
+							className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 text-gray-700"
+						>
+							Next
+						</button>
+					</div>
 				</div>
-			</div>
-			):(
+			) : (
 				<div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md text-center">
-					<h2 className="text-xl font-semibold text-red-600 mb-4">You are not verified</h2>
+					<h2 className="text-xl font-semibold text-red-600 mb-4">
+						You are not verified
+					</h2>
 					<p className="text-gray-700 mb-4">Please verify yourself.</p>
 					<button
-						onClick={() => {navigate('/mentor/home')}}
+						onClick={() => {
+							navigate("/mentor/home");
+						}}
 						className="px-4 py-2 text-sm text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none"
 					>
 						Go Back to Home
 					</button>
-					</div>
+				</div>
 			)}
 		</div>
 	);
