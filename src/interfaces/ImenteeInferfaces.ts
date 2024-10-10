@@ -135,3 +135,13 @@ export interface IWallet {
   name:string;
   wallet:string;
 }
+
+export interface Slot {
+	_id: string;
+	date: string;
+	startTime: string;
+	endTime: string;
+	bookedSlots: Array<{
+		status?: string;
+	}>;
+}

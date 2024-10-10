@@ -35,8 +35,9 @@ const formatDate = (dateString: string): string => {
 const AdminMentorDetailsBody: React.FC = () => {
   const [verificationStatus, setVerificationStatus] = useState('pending');
   const [mentorDetails, setMentorDetails] = useState<IMentorDetails | null>(null);
-  // const [statusUpdated, setStatusUpdated] = useState(false);
   const { id } = useParams<{ id: string }>();
+  const [status,setStatus] = useState("")
+
 
   useEffect(() => {
     const getMentorDetails = async () => {
@@ -46,6 +47,7 @@ const AdminMentorDetailsBody: React.FC = () => {
         });
       
         if (response.status === 200 && response.data.message === "Success") {
+          setStatus(response.data.mentor.isVerified)
           setMentorDetails(response.data.mentorData);
           setVerificationStatus(response.data.mentorData.isVerified ? 'verified' : 'pending');
         } else {
@@ -101,9 +103,7 @@ const AdminMentorDetailsBody: React.FC = () => {
       });
     
       if (updateResponse.status === 200 && updateResponse.data.message === "Status updated successfully.") {
-        toast.success('Mentor status updated successfully.');
-        // setStatusUpdated(true);
-    
+        toast.success('Mentor status updated successfully.');    
         const updatedResponse = await apiClientAdmin.get(`${LOCALHOST_URL}/api/admin/getMentorDetails`, {
           params: { id }
         });
@@ -128,9 +128,13 @@ const AdminMentorDetailsBody: React.FC = () => {
   };
 
   const renderStatusOptions = () => {
-    if (mentorDetails && mentorDetails.isVerified) {
+    if (status === "verified") {
       return (
         <option value="verified">Verified</option>
+      );
+    } else if (status === "rejected") {
+      return (
+        <option value="rejected">Rejected</option>
       );
     } else {
       return (

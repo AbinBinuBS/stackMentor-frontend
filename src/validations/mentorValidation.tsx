@@ -133,3 +133,32 @@ export const timeSheduleValidation = Yup.object({
     }),
 });
 
+
+export const editProfileValidation = Yup.object().shape({
+  name: Yup.string().required('Name is required'),
+  image: Yup.mixed()
+    .nullable()
+    .test('fileType', 'Unsupported file format', function (value: any) {
+      if (!value || !(value instanceof File)) return true;
+      return ['image/jpeg', 'image/png', 'image/gif'].includes(value.type);
+    })
+    .test('fileSize', 'File too large', function (value: any) {
+      if (!value || !(value instanceof File)) return true;
+      return value.size <= 5 * 1024 * 1024; 
+    }),
+});
+
+
+export const passwordValidationSchema = Yup.object().shape({
+  oldPassword: Yup.string().required('Old password is required'),
+  newPassword: Yup.string()
+    .required('New password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+    ),
+  confirmNewPassword: Yup.string()
+    .required('Confirm new password is required')
+    .oneOf([Yup.ref('newPassword'), ''], 'Passwords must match'),
+});

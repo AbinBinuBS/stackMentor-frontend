@@ -9,11 +9,11 @@ import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
 const MentorBookedSlotsBody: React.FC = () => {
-  const [bookedSlots, setBookedSlots] = useState<ISlotMentor[] | null>(null);
+  const [bookedSlots, setBookedSlots] = useState<ISlotMentor[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [slotsPerPage] = useState<number>(5);
+  const [isMentorAllowed, setIsMentorAllowed] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -21,10 +21,18 @@ const MentorBookedSlotsBody: React.FC = () => {
     const getBookedSlots = async () => {
       try {
         const response = await apiClient.get(`${LOCALHOST_URL}/api/mentor/getBookedSlots`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setBookedSlots(response.data.Slots);
+        setIsMentorAllowed(true);
       } catch (error) {
         if (error instanceof Error) {
-          setError(error.message);
+          if (error.message === "Mentor is not verified. Please complete the verification process.") {
+            setIsMentorAllowed(false);
+          } else {
+            toast.error(error.message);
+          }
+        } else {
+          toast.error("Unable to fetch data.");
         }
       } finally {
         setLoading(false);
@@ -42,7 +50,7 @@ const MentorBookedSlotsBody: React.FC = () => {
         navigate('/mentor/chat');
       }
     } catch (error) {
-      console.log("error occurred during chat:", error);
+      toast.error("Failed to initiate chat.");
     }
   };
 
@@ -55,7 +63,6 @@ const MentorBookedSlotsBody: React.FC = () => {
     try {
       const bookedId = slot.bookingData._id;
       const currentDate = new Date();
-
       const slotDate = new Date(slot.date);
       const [startHour, startMinute] = slot.startTime.split(':').map(Number);
       slotDate.setHours(startHour, startMinute, 0, 0);
@@ -68,26 +75,24 @@ const MentorBookedSlotsBody: React.FC = () => {
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, start early!'
+          confirmButtonText: 'Yes, start early!',
         });
 
         if (!result.isConfirmed) {
           return;
         }
       }
+
       const response = await apiClient.post(`${LOCALHOST_URL}/api/mentor/allowConnection`, { bookedId });
       if (response.data.message === "Success") {
         toast.success("Connection allowed successfully.");
-        
-        if (bookedSlots) {
-          const updatedSlots = bookedSlots.map(s =>
-            s.bookingData._id === bookedId ? { ...s, bookingData: { ...s.bookingData, isAllowed: true } } : s
-          );
-          setBookedSlots(updatedSlots ?? null);
-        }
+        const updatedSlots = bookedSlots.map(s =>
+          s.bookingData._id === bookedId ? { ...s, bookingData: { ...s.bookingData, isAllowed: true } } : s
+        );
+        setBookedSlots(updatedSlots);
       }
     } catch (error) {
-      toast.error("Something unexpected happened.");
+      toast.error("Something unexpected happened while connecting.");
     }
   };
 
@@ -98,35 +103,54 @@ const MentorBookedSlotsBody: React.FC = () => {
 
       if (response.data.message === "Success") {
         toast.success("Connection ended successfully.");
-        if (bookedSlots) {
-          const updatedSlots = bookedSlots.map(s =>
-            s.bookingData._id === bookedId
-              ? { ...s, bookingData: { ...s.bookingData, isAllowed: false, status: 'completed' } }
-              : s
-          );
-          setBookedSlots(updatedSlots ?? null);
-        }
+        const updatedSlots = bookedSlots.map(s =>
+          s.bookingData._id === bookedId
+            ? { ...s, bookingData: { ...s.bookingData, isAllowed: false, status: 'completed' } }
+            : s
+        );
+        setBookedSlots(updatedSlots);
       }
     } catch (error) {
-      toast.error("Something unexpected happened.");
+      toast.error("Something unexpected happened while ending the connection.");
     }
   };
 
   const indexOfLastSlot = currentPage * slotsPerPage;
   const indexOfFirstSlot = indexOfLastSlot - slotsPerPage;
-  const currentSlots = bookedSlots?.slice(indexOfFirstSlot, indexOfLastSlot);
+  const currentSlots = bookedSlots.slice(indexOfFirstSlot, indexOfLastSlot);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   if (loading) {
-    return <div className="p-4">Loading...</div>;
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <p className="mt-4 text-lg font-semibold text-gray-700">Loading...</p>
+      </div>
+    );
   }
 
-  if (error) {
-    return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (!isMentorAllowed) {
+    return (
+      <div className="flex flex-col justify-center items-center ">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md text-center mt-36 mr-4 ml-4">
+          <h2 className="text-xl font-semibold text-red-600 mb-4">You are not verified</h2>
+          <p className="text-gray-700 mb-4">Please complete the verification process to access your booked slots.</p>
+          <button
+            onClick={() => {navigate('/mentor/home')}}
+            className="px-4 py-2 text-sm text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none"
+          >
+            Go Back to Home
+          </button>
+        </div>
+      </div>
+    );
   }
+  
+  
+  
 
-  if (!bookedSlots || bookedSlots.length === 0) {
+  if (!bookedSlots.length) {
     return <div className="p-4">No booked slots available.</div>;
   }
 

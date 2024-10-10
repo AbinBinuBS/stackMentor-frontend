@@ -6,21 +6,18 @@ import apiClient from "../../../services/apiClient";
 import { LOCALHOST_URL } from "../../../constants/constants";
 import { format, parseISO, isSameDay } from "date-fns";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { Slot } from "../../../interfaces/ImenteeInferfaces";
 
-interface Slot {
-	_id: string;
-	date: string;
-	startTime: string;
-	endTime: string;
-	bookedSlots: Array<{
-		status?: string;
-	}>;
-}
+
 
 const MentorMySlotBody: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 	const [slots, setSlots] = useState<Slot[]>([]);
+	const [ismentorAllowed,setIsMentorAllowed] = useState<boolean>()
+  	const [loading, setLoading] = useState(true);
+	const navigate = useNavigate()
 	const slotsPerPage = 6;
 
 	useEffect(() => {
@@ -32,6 +29,9 @@ const MentorMySlotBody: React.FC = () => {
 			const response = await apiClient.get(
 				`${LOCALHOST_URL}/api/mentor/getSlots`
 			);
+			await new Promise(resolve => setTimeout(resolve, 1000));
+      		setLoading(false)
+			setIsMentorAllowed(true)
 			if (response.data.message === "Slots sent successfully") {
 				setSlots(response.data.sloteData || []);
 			} else {
@@ -39,8 +39,9 @@ const MentorMySlotBody: React.FC = () => {
 			}
 		} catch (error) {
 			if (error instanceof Error) {
-				if (error.message === "Request failed with status code 403") {
-					toast.error("Mentor should be verified.");
+				if (error.message === "Mentor is not verified. Please complete the verification process.") {
+					setIsMentorAllowed(false)
+        			setLoading(false)
 				} else {
 					toast.error(error.message);
 				}
@@ -139,8 +140,18 @@ const MentorMySlotBody: React.FC = () => {
 		}
 	};
 
+	if (loading) {
+		return (
+		  <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+			<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+			<p className="mt-4 text-lg font-semibold text-gray-700">Loading...</p>
+		  </div>
+		);
+	  }
+
 	return (
 		<div className="flex ml-16 flex-col justify-center items-center min-h-screen bg-gray-100 p-6">
+			{ismentorAllowed ? (
 			<div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg">
 				<h2 className="text-2xl font-bold mb-4">Mentoring Slots</h2>
 				<div className="mb-6">
@@ -223,6 +234,18 @@ const MentorMySlotBody: React.FC = () => {
 					</button>
 				</div>
 			</div>
+			):(
+				<div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md text-center">
+					<h2 className="text-xl font-semibold text-red-600 mb-4">You are not verified</h2>
+					<p className="text-gray-700 mb-4">Please verify yourself.</p>
+					<button
+						onClick={() => {navigate('/mentor/home')}}
+						className="px-4 py-2 text-sm text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none"
+					>
+						Go Back to Home
+					</button>
+					</div>
+			)}
 		</div>
 	);
 };
