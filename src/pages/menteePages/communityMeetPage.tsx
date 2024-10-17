@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MenteeHeader from "../../components/commonComponents/MenteeHeader.tsx";
+import MenteeHeader from "../../components/commonComponents/MenteeHeader";
 import QASidebar from "../../components/menteeComponents/Q&A/qaSidebar";
 import CommunityMeetBody from "../../components/menteeComponents/Community-Meet/communirtMeetBody";
 

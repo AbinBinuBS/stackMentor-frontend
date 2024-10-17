@@ -1,4 +1,4 @@
-import MenteeHeader from "../../components/commonComponents/MenteeHeader.tsx";
+import MenteeHeader from "../../components/commonComponents/MenteeHeader";
 import MenteeLoginBody from "../../components/menteeComponents/MenteeLogin/menteeLoginBody";
 
 const MenteeLogin = () => {

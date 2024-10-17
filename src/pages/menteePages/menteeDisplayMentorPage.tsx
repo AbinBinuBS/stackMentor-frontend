@@ -1,4 +1,4 @@
-import MenteeHeader from "../../components/commonComponents/MenteeHeader.tsx";
+import MenteeHeader from "../../components/commonComponents/MenteeHeader";
 import MentorDisplayBody from "../../components/menteeComponents/MentorDisplay/mentorDisplayBody";
 
 const MenteeDisplayMentorPage = () => {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MenteeHeader from "../../components/commonComponents/MenteeHeader.tsx"
+import MenteeHeader from "../../components/commonComponents/MenteeHeader"
 import AccountSidebar from "../../components/menteeComponents/Account/accountSidebar";
 import AccountBody from "../../components/menteeComponents/Account/accountBody";
 
