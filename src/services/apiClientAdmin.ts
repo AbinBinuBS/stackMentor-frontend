@@ -3,7 +3,7 @@ import { store } from "../redux/store";
 import { adminLogout } from "../redux/adminSlice";
 
 const apiClientAdmin = axios.create({
-	baseURL: "https://stack-mentor.vercel.app",
+	baseURL: "https://999bookstore.online",
 	headers: {
 		"Content-Type": "application/json",
 	},

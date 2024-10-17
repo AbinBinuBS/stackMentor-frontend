@@ -2,23 +2,24 @@ import { Route, Routes } from "react-router-dom";
 import LandingPage from "../pages/menteePages/landingPage";
 import MenteeLogin from "../pages/menteePages/menteeLoginPage";
 import MenteeRegister from "../pages/menteePages/menteeRegisterPage";
-import MenteeForgotPassword from "../pages/menteePages/MenteeForgotPasswordPage";
+import MenteeForgotPassword from "../pages/menteePages/menteeForgotPasswordPage";
 import OtpPage from "../pages/menteePages/menteeOtpPage";
 import MenteeForgotPasswordOtp from "../pages/menteePages/menteeForgotPasswordOtpPage";
-import MenteeForgotPasswordReset from "../pages/menteePages/MenteeForgotPasswordResetPage";
+import MenteeForgotPasswordReset from "../pages/menteePages/menteeForgotPasswordResetPage";
 import MenteeLoginProtectiveCheck from "../protectiveCheck/menteeLoginProtectiveCheck";
 import MenteeLogoutProtectiveCheck from "../protectiveCheck/menteeLogoutProtectiveCheck";
 import MenteeDisplayMentorPage from "../pages/menteePages/menteeDisplayMentorPage";
 import MenteeSignleMentorPage from "../pages/menteePages/menteeSignleMentorPage";
 import MenteeSlotBookedPage from "../pages/menteePages/menteeSlotBookedPage";
 import ChatPage from "../pages/chatpages/chatPage";
-import WalletPage from "../pages/menteePages/walletPage";
-import RoomPage from "../pages/menteePages/room";
-import QAPage from "../pages/menteePages/MenteeQ&APage";
+import WalletPage from "../pages/menteePages/menteeWalletPage";
+import RoomPage from "../pages/menteePages/menteeRoom";
+import QAPage from "../pages/menteePages/menteeQ&APage";
 import AskQuestionPage from "../pages/menteePages/menteeAskQuestions";
 import CommunityMeetPage from "../pages/menteePages/communityMeetPage";
 import GroupCallPage from "../pages/menteePages/groupCallPage";
 import SelectingMentorOrMenteePage from "../pages/commonPages/selectingMentorOrMenteePage";
+import MenteeAccountPage from "../pages/menteePages/menteeAccountPage";
 
 const MenteeRoutes = () => {
 	return (
@@ -66,6 +67,12 @@ const MenteeRoutes = () => {
 				path="/mentorDetails/:id"
 				element={
 					<MenteeLoginProtectiveCheck element={<MenteeSignleMentorPage />} />
+				}
+			/>
+			<Route
+				path="/account"
+				element={
+					<MenteeLoginProtectiveCheck element={<MenteeAccountPage />} />
 				}
 			/>
 			<Route

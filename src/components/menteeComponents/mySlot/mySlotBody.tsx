@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useFormik } from "formik";
 import apiClientMentee from "../../../services/apiClientMentee";
 import { LOCALHOST_URL } from "../../../constants/constants";
 import { useNavigate } from "react-router-dom";
@@ -6,10 +7,11 @@ import { useDispatch } from "react-redux";
 import { setSelectedChat } from "../../../redux/chatSlice";
 import toast from "react-hot-toast";
 import {
-	ApiResponse,
-	RescheduleOption,
-	Slot,
+  ApiResponse,
+  RescheduleOption,
+  Slot,
 } from "../../../interfaces/ImenteeInferfaces";
+import { ratingSchema } from "../../../validations/menteeValidation";
 
 const convertTo12HourFormat = (time: string): string => {
 	const [hour, minute] = time.split(":").map(Number);
@@ -32,7 +34,10 @@ const MySlotBody: React.FC = () => {
 	const [slotToCancel, setSlotToCancel] = useState<Slot | null>(null);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const [showModal, setShowModal] = useState(false);
 
+	
+	
 	useEffect(() => {
 		fetchSlots();
 	}, []);
@@ -126,9 +131,10 @@ const MySlotBody: React.FC = () => {
 
 	const handleChat = async (slot: Slot) => {
 		try {
+			console.log("22222222222",slot)
 			const response = await apiClientMentee.post(
 				`${LOCALHOST_URL}/api/chat/mentee`,
-				slot
+				{id:slot.mentorData._id}
 			);
 			if (response.data.message == "Success") {
 				dispatch(setSelectedChat(response.data.chat));
@@ -147,8 +153,35 @@ const MySlotBody: React.FC = () => {
 		}
 	};
 
+	
+	
+	  const formik = useFormik({
+		initialValues: {
+		  rating: 0,
+		  comment: "",
+		},
+		validationSchema: ratingSchema,
+		onSubmit: async(values) => {
+		  try{
+			const { data } = await apiClientMentee.post(`${LOCALHOST_URL}/api/mentees/review`,{values,slotId:selectedSlot?.mentorData._id})
+			if(data.message == "Success"){
+				toast.success("Rating added")
+				  setShowModal(false);
+				  formik.resetForm();
+			}
+		  }catch(error){
+			console.log("error occurred during chat:", error);
+		  }
+		},
+	  });
+	
+	  const handleRating = (slot: Slot) => {
+		setSelectedSlot(slot);
+		setShowModal(true);
+	  };
+
 	return (
-		<div className="w-full max-w-4xl mx-auto mt-32">
+		<div className="w-full max-w-4xl mx-auto">
 			<h1 className="text-2xl font-bold mb-4">My Slots</h1>
 			<div className="bg-white shadow-lg rounded-lg p-6 h-[500px]">
 				<div className="h-full overflow-y-auto pr-4">
@@ -188,9 +221,17 @@ const MySlotBody: React.FC = () => {
 											</div>
 											<div className="space-x-2">
 												{slot.status === "completed" ? (
-													<span className="text-green-500 font-medium">
-														Completed
-													</span>
+													<>
+														<button
+															onClick={() => handleRating(slot)}
+															className="px-3 py-1 bg-slate-400 text-white text-sm rounded-md font-medium hover:bg-slate-700 transition duration-200"
+														>
+															Rate
+														</button>
+														<span className="text-green-500 font-medium">
+															Completed
+														</span>
+													</>
 												) : slot.status === "cancelled" ? (
 													<span className="text-red-500 font-medium">
 														Cancelled
@@ -209,7 +250,22 @@ const MySlotBody: React.FC = () => {
 														>
 															Cancel
 														</button>
-														{!slot.isAllowed ? (
+														{slot.isAllowed ? (
+															<>
+																<button
+																	onClick={() => handleChat(slot)}
+																	className="px-3 py-1 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white text-sm rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200"
+																>
+																	Chat
+																</button>
+																<button
+																	onClick={() => handleVedioCall(slot)}
+																	className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md font-medium hover:bg-red-600 transition duration-200"
+																>
+																	Video Chat
+																</button>
+															</>
+														) : (
 															<>
 																<button
 																	className="px-3 py-1 bg-gray-300 text-white text-sm rounded-md font-medium cursor-not-allowed"
@@ -232,21 +288,6 @@ const MySlotBody: React.FC = () => {
 																	Video Chat
 																</button>
 															</>
-														) : (
-															<>
-																<button
-																	onClick={() => handleChat(slot)}
-																	className="px-3 py-1 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white text-sm rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200"
-																>
-																	Chat
-																</button>
-																<button
-																	onClick={() => handleVedioCall(slot)}
-																	className="px-3 py-1 bg-purple-500 text-white text-sm rounded-md font-medium hover:bg-red-600 transition duration-200"
-																>
-																	Video Chat
-																</button>
-															</>
 														)}
 													</>
 												)}
@@ -260,6 +301,61 @@ const MySlotBody: React.FC = () => {
 						<p>No slots available.</p>
 					)}
 				</div>
+				{showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg w-96 shadow-xl">
+            <h3 className="text-2xl font-bold mb-6 text-center text-gray-800">Rate Your Mentor</h3>
+            <form onSubmit={formik.handleSubmit}>
+              <div className="flex justify-center mb-6">
+                {[...Array(5)].map((_, index) => (
+                  <span
+                    key={index}
+                    className={`cursor-pointer text-4xl ${
+                      formik.values.rating > index ? "text-yellow-400" : "text-gray-300"
+                    } transition-colors duration-200 hover:text-yellow-400`}
+                    onClick={() => formik.setFieldValue("rating", index + 1)}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+              {formik.touched.rating && formik.errors.rating && (
+                <p className="text-red-500 text-sm text-center mb-4">{formik.errors.rating}</p>
+              )}
+              <textarea
+                name="comment"
+                placeholder="Share your experience (50-150 characters)"
+                value={formik.values.comment}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={4}
+              />
+              {formik.touched.comment && formik.errors.comment && (
+                <p className="text-red-500 text-sm mb-4">{formik.errors.comment}</p>
+              )}
+              <div className="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowModal(false);
+                    formik.resetForm();
+                  }}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 			</div>
 
 			{isRescheduleModalOpen && (

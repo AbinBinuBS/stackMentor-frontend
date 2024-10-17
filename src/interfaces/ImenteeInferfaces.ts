@@ -1,4 +1,4 @@
-import { ObjectId } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 
 export interface IMentorVerification {
 	name: string;
@@ -34,6 +34,15 @@ export interface StoreData {
 		refreshToken: string;
 	};
 }
+
+
+export interface mentorStoreData {
+	mentor: {
+		accessToken: string;
+		refreshToken: string;
+	};
+}
+export type Stack = "Python" | "MERN" | "Data Science" | "Java" | "DevOps" | "Cloud Computing" | "Mobile Development" |  "Machine Learning" | "Blockchain" | "UI/UX Design" |  "Cybersecurity" | "Game Development" | "AR/VR" | "IoT" | "Embedded Systems";
 
 export interface Mentor {
 	_id: string;
@@ -80,6 +89,7 @@ export interface ICommunityMeet {
 
 export interface MenteeSingleMentorSidebarProps {
 	mentor: IMentorVerification | null;
+	ratings: IRating[] | null
 }
 
 export interface MentorData {
@@ -87,6 +97,13 @@ export interface MentorData {
 	name: string;
 	image: string;
 }
+
+export interface IMentee {
+	_id: string;
+	name: string;
+	email: string;
+}
+
 
 export interface Slot {
 	_id: string;
@@ -139,3 +156,22 @@ export interface Slot {
 export interface ProtectiveCheckProps {
 	element: React.ReactNode;
 }
+
+
+export interface AccountBodyProps {
+	isOpen: boolean;
+	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  }
+
+
+  export interface IRating {
+	ratingValue: number;  
+    comment: string;     
+    mentee: {
+		_id:string,
+		name:string
+	}
+    mentor: Types.ObjectId;
+    createdAt: Date;      
+    updatedAt: Date;
+  }

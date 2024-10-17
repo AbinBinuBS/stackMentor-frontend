@@ -1,5 +1,5 @@
-import MentorAccountSidebar from "../../components/commonComponents/mentorAccountSidebar";
-import MentorHeader from "../../components/commonComponents/mentorHeader";
+import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
+import MentorHeader from "../../components/commonComponents/MentorHeader";
 import MentorSheduleTimeBody from "../../components/mentorComponents/Shedule Time/mentorSheduletimeBody";
 
 const MentorSheduleTimePage = () => {

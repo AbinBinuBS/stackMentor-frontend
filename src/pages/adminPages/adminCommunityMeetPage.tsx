@@ -1,6 +1,6 @@
 import AdminCommunityMeetBody from "../../components/adminComponents/Community-Meet/adminCommunityMeetBody";
 import AdminDashboardSidebar from "../../components/adminComponents/Dashboard/adminDashboardSidebar";
-import AdminHeader from "../../components/commonComponents/adminHeader";
+import AdminHeader from "../../components/commonComponents/AdminHeader";
 
 const AdminCommunityMeetPage = () => {
 	return (

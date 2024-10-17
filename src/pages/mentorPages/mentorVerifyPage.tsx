@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import MentorHeader from "../../components/commonComponents/mentorHeader";
+import MentorHeader from "../../components/commonComponents/MentorHeader";
 import MentorVerifyBody from "../../components/mentorComponents/Verify/mentorVerifyBody";
 import MentorVerifySuccessBody from "../../components/mentorComponents/Verify/mentorVerifySuccessBody";
 import apiClient from "../../services/apiClient";

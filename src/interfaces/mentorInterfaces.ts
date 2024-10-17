@@ -17,6 +17,10 @@ export interface MentorVerifyFormValues {
 	experienceCertificate: File | null;
 }
 
+
+export type Stack = "Python" | "MERN" | "Data Science" | "Java" | "DevOps" | "Cloud Computing" | "Mobile Development" | "Machine Learning" | "Blockchain" | "UI/UX Design" | "Cybersecurity" | "Game Development" | "AR/VR" | "IoT" | "Embedded Systems";
+
+
 export interface ISlotMentor {
 	_id: ObjectId;
 	date: Date;

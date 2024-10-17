@@ -1,5 +1,5 @@
-import MentorAccountSidebar from "../../components/commonComponents/mentorAccountSidebar";
-import MentorHeader from "../../components/commonComponents/mentorHeader";
+import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
+import MentorHeader from "../../components/commonComponents/MentorHeader";
 import MentorMySlotBody from "../../components/mentorComponents/MySlot/mentorMyslotBody";
 
 const MentorMySlotPage = () => {

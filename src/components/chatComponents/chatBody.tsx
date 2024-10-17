@@ -3,23 +3,67 @@ import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import io from 'socket.io-client';
 import apiClientMentee from '../../services/apiClientMentee';
-import { LOCALHOST_URL } from '../../constants/constants';
-import { Message, RootState, User } from '../../interfaces/IChatMenteeInterface';
+import { 
+  joinChatRoom, 
+  sendMessage, 
+  handleTyping, 
+  stopTyping, 
+  onMessageReceived, 
+  onTyping, 
+  onStopTyping, 
+  initializeSocket,
+  disconnectSocket
+} from '../../services/socketManager';
 import toast from 'react-hot-toast';
+import { resetSelectedChat } from '../../redux/chatSlice';
+import { useDispatch } from 'react-redux';
+import { LOCALHOST_URL } from '../../constants/constants';
 
+interface Message {
+  _id: string;
+  chat: {
+    _id: string;
+    chatName: string;
+    mentor: string;
+    mentee: string;
+    createdAt: string;
+  };
+  content: string;
+  createdAt: string;
+  readBy: string[];
+  sender: {
+    _id: string;
+    name: string;
+  };
+  senderModel: 'MentorVarify' | 'Mentee';
+  updatedAt: string;
+  __v: number;
+}
 
+interface User {
+  id: string;
+  name: string;
+}
 
-const ENDPOINT = LOCALHOST_URL;
-let socket: any
+interface RootState {
+  chat: {
+    selectedChat: {
+      _id: string;
+      mentor?: {
+        name: string;
+        image: string;
+      };
+    } | null;
+  };
+}
 
 const ChatBody: React.FC<{ user: User }> = ({ user }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const selectedChat = useSelector((state: RootState) => state.chat.selectedChat);
   const [newMessage, setNewMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
-  const [socketConnected, setSocketConnected] = useState<boolean>(false);
   const [typing, setTyping] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -27,37 +71,45 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    console.log("ssssssssssssssssss",selectedChat)
     if (!selectedChat || !user) return;
-
-    socket = io(ENDPOINT);
-
-    socket.emit('setup', { _id: user.id });
-    socket.on('connected', () => setSocketConnected(true));
-    socket.on('message received', (newMessageReceived: Message) => {
-      if(selectedChat._id === newMessageReceived.chat._id){
-        setMessages((prevMessages) => [...prevMessages, newMessageReceived]);
+  
+    initializeSocket(user.id);
+    joinChatRoom(selectedChat._id); 
+  
+    onMessageReceived((newMessageReceived: Message) => {
+      if (selectedChat._id === newMessageReceived.chat._id) {
+        setMessages((prevMessages) => {
+          const messageExists = prevMessages.some(message => message._id === newMessageReceived._id);
+          if (messageExists) {
+            console.log('Duplicate message detected:', newMessageReceived._id);
+            return prevMessages;
+          }
+          return [...prevMessages, newMessageReceived];
+        });
       }
     });
-    socket.on('typing', () => setIsTyping(true));
-    socket.on('stop typing', () => setIsTyping(false));
-
+  
+    onTyping(() => setIsTyping(true));
+    onStopTyping(() => setIsTyping(false));
+  
     return () => {
-      socket.off('typing');
-      socket.off('stop typing');
-      socket.disconnect();
+      disconnectSocket(); 
+       
     };
-  }, [selectedChat, user]);
+  }, [selectedChat, user, dispatch]);
+  
 
   useEffect(() => {
     const fetchMessages = async () => {
       if (selectedChat?._id) {
         setIsLoading(true);
         try {
-          const response = await apiClientMentee.get<Message[]>(`${LOCALHOST_URL}/api/message/${selectedChat._id}`);
+          const response = await apiClientMentee.get<Message[]>(`/api/message/${selectedChat._id}`);
           setMessages(response.data);
-          socket.emit('join chat', selectedChat._id);
+          joinChatRoom(selectedChat._id);
         } catch (error) {
-          toast.error("somethingUnexpected happened")
+          toast.error('Something unexpected happened');
         } finally {
           setIsLoading(false);
         }
@@ -67,6 +119,18 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
     fetchMessages();
   }, [selectedChat]);
 
+  useEffect(()=>{
+    const markSeenMessage = async() =>{
+      try{
+        if(!selectedChat)return 
+         await apiClientMentee.put(`${LOCALHOST_URL}/api/mentees/readChat/${selectedChat._id}`)
+      }catch(error){
+        console.log(error)
+      }
+    }
+    markSeenMessage()
+  },[])
+
   useEffect(() => {
     if (!isLoading) {
       scrollToBottom();
@@ -74,15 +138,13 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
   }, [messages, isLoading]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleTyping = useCallback(() => {
-    if (!socketConnected) return;
-
+  const handleTypingEvent = useCallback(() => {
     if (!typing) {
       setTyping(true);
-      socket.emit('typing', selectedChat?._id);
+      handleTyping(selectedChat?._id as string);
     }
 
     if (typingTimeoutRef.current) {
@@ -90,34 +152,40 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
     }
 
     typingTimeoutRef.current = setTimeout(() => {
-      socket.emit('stop typing', selectedChat?._id);
+      stopTyping(selectedChat?._id as string);
       setTyping(false);
     }, 3000);
-  }, [socketConnected, typing, selectedChat]);
+  }, [typing, selectedChat]);
 
   const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewMessage(e.target.value);
-    handleTyping();
+    handleTypingEvent();
   };
 
   const handleButtonClick = async () => {
     if (!newMessage.trim() || !selectedChat?._id) return;
 
     try {
-      const response = await apiClientMentee.post<Message>(`${LOCALHOST_URL}/api/message`, {
+      const response = await apiClientMentee.post<Message>('/api/message', {
         content: newMessage,
         chatId: selectedChat._id,
       });
-      socket.emit('new message', response.data);
+      sendMessage(response.data);
       setMessages((prevMessages) => [...prevMessages, response.data]);
       setNewMessage('');
     } catch (error) {
-      toast.error("somethingUnexpected happened")
+      toast.error('Something unexpected happened');
     }
   };
 
   const handleBack = () => {
     navigate(-1);
+    dispatch(resetSelectedChat());
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   if (!selectedChat) {
@@ -141,40 +209,39 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
               {selectedChat.mentor?.name || 'Unknown Mentor'}
             </span>
             <span className="text-xs text-gray-300 h-4">
-              {isTyping ? 'Typing...' : '\u00A0'}
+              {isTyping ? 'Typing...' : '...'}
             </span>
           </div>
         </div>
-        <div className="flex-grow overflow-y-auto p-4 space-y-4 relative">
+
+        <div className="flex-1 overflow-y-auto p-4">
           {isLoading ? (
-            <div className="flex justify-center items-center h-full">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
+            <div>Loading messages...</div>
           ) : (
             messages.map((message) => (
-              <div key={message._id} className={`flex items-start ${message.senderModel === "MentorVarify" ? 'justify-start' : 'justify-end'}`}>
-                <div className={`rounded-lg p-3 max-w-[70%] ${message.senderModel === "MentorVarify" ? 'bg-gray-200' : 'bg-blue-300'}`}>
-                  <p className="break-words whitespace-pre-wrap" style={{ wordBreak: 'break-word' }}>
-                    {message.content}
-                  </p>
+              <div 
+                key={message._id} 
+                className={`mb-2 ${message.sender._id === user.id ? 'text-right' : 'text-left'}`}
+              >
+                <div className={`inline-block p-2 rounded-lg ${message.sender._id === user.id ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+                  <p>{message.content}</p>
+                  <span className="text-xs text-gray-500">{formatTime(message.createdAt)}</span>
                 </div>
               </div>
             ))
           )}
           <div ref={messagesEndRef} />
         </div>
-        <div className="p-4 flex items-center">
-          <input
-            type="text"
-            placeholder="Enter your message"
-            value={newMessage}
-            onChange={inputChange}
-            className="flex-grow px-2 py-1 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm"
+
+        <div className="p-4 flex">
+          <input 
+            type="text" 
+            value={newMessage} 
+            onChange={inputChange} 
+            placeholder="Type a message..." 
+            className="flex-1 p-2 border rounded-lg"
           />
-          <button
-            onClick={handleButtonClick}
-            className="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-          >
+          <button onClick={handleButtonClick} className="ml-2 p-2 bg-blue-500 text-white rounded-lg">
             <FontAwesomeIcon icon={faPaperPlane} />
           </button>
         </div>

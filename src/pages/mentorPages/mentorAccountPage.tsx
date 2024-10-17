@@ -1,6 +1,6 @@
-import MentorHeader from "../../components/commonComponents/mentorHeader";
+import MentorHeader from "../../components/commonComponents/MentorHeader";
 import MentorAccountBody from "../../components/mentorComponents/Account/mentorAccountBody";
-import MentorAccountSidebar from "../../components/commonComponents/mentorAccountSidebar";
+import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
 
 const MentorAccountPage = () => {
 	return (

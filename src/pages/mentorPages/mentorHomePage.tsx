@@ -1,5 +1,5 @@
 import React from "react";
-import MentorHeader from "../../components/commonComponents/mentorHeader";
+import MentorHeader from "../../components/commonComponents/MentorHeader";
 import MentorHomeBody from "../../components/mentorComponents/Home/mentorHomeBody";
 
 const MentorHomePage: React.FC = () => {

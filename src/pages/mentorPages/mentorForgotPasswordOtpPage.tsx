@@ -1,4 +1,4 @@
-import MentorSidebar from "../../components/commonComponents/mentorSidebar";
+import MentorSidebar from "../../components/commonComponents/MentorSidebar";
 import MentorForgotPasswordBody from "../../components/mentorComponents/Forgot Password/mentorForgotPasswordOtpBody";
 
 const MentorForgotPasswordOtpPage = () => {

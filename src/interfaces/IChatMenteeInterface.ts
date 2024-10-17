@@ -7,6 +7,8 @@ export interface Message {
 		_id: string;
 		chatName: string;
 	};
+	createdAt: Date;
+  	updatedAt: Date;
 }
 
 export interface User {

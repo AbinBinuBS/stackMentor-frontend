@@ -3,7 +3,7 @@ import { LOCALHOST_URL } from '../../../constants/constants';
 import apiClient from '../../../services/apiClient';
 import { ISlotMentor } from '../../../interfaces/mentorInterfaces';
 import { useDispatch } from 'react-redux';
-import { setSelectedChat } from '../../../redux/chatSlice';
+import { setSelectedChatMentor } from '../../../redux/chatSlice';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -44,9 +44,9 @@ const MentorBookedSlotsBody: React.FC = () => {
 
   const handleChat = async (slot: ISlotMentor) => {
     try {
-      const response = await apiClient.post(`${LOCALHOST_URL}/api/chat/mentor`, slot);
+      const response = await apiClient.post(`${LOCALHOST_URL}/api/chat/mentor`, {id:slot.bookingData.userId});
       if (response.data.message === "Success") {
-        dispatch(setSelectedChat(response.data.chat));
+        dispatch(setSelectedChatMentor(response.data.chat));
         navigate('/mentor/chat');
       }
     } catch (error) {

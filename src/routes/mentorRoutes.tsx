@@ -19,6 +19,7 @@ import QAPage from "../pages/mentorPages/aqPage";
 import CommunityMeetPage from "../pages/mentorPages/communityMeet";
 import MyCommunityPage from "../pages/mentorPages/myCommunityPage";
 import MentorGroupCallPage from "../pages/mentorPages/mentorGroupcallPage";
+import MentorMyReviewPage from "../pages/mentorPages/mentorMyRatingsPage";
 
 const MentorRoutes = () => {
 	return (
@@ -108,6 +109,10 @@ const MentorRoutes = () => {
 			<Route
 				path="/community/room/:roomId"
 				element={<MentorProtectiveCheck element={<MentorGroupCallPage />} />}
+			/>
+			<Route
+				path="/my-ratings"
+				element={<MentorProtectiveCheck element={<MentorMyReviewPage />} />}
 			/>
 		</Routes>
 	);

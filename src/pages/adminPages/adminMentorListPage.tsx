@@ -1,7 +1,7 @@
 import React from "react";
 import AdminDashboardSidebar from "../../components/adminComponents/Dashboard/adminDashboardSidebar";
 import AdminMentorListBody from "../../components/adminComponents/MentorList/adminmentorListBody";
-import AdminHeader from "../../components/commonComponents/adminHeader";
+import AdminHeader from "../../components/commonComponents/AdminHeader";
 
 const AdminMentorListPage: React.FC = () => {
 	return (

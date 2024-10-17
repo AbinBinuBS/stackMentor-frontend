@@ -1,3 +1,4 @@
+import moment from "moment";
 import * as Yup from "yup";
 
 export const MentorsignupValidation = Yup.object({
@@ -26,106 +27,112 @@ export const MentorsignupValidation = Yup.object({
 		.required("Please confirm your password"),
 });
 
-const allowedFileTypes: string[] = [
-	"application/pdf",
-	"application/msword",
-	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-	"image/jpeg",
-	"image/png",
-];
+const allowedImageTypes: string[] = ["image/jpeg", "image/png"];
+const allowedPDFType: string = "application/pdf";
 
-const fileValidation = Yup.mixed<File>()
+// Validation for image files
+const imageFileValidation = Yup.mixed<File>()
 	.required("File is required")
-	.test("fileType", "Unsupported file format", (value) => {
+	.test("fileType", "Unsupported image format", (value) => {
 		if (value && value instanceof File) {
-			return allowedFileTypes.includes(value.type);
+			return allowedImageTypes.includes(value.type);
+		}
+		return false;
+	})
+	.test("fileSize", "Image file size is too large", (value) => {
+		if (value && value instanceof File) {
+			return value.size <= 5 * 1024 * 1024; // 5MB
+		}
+		return false;
+	});
+
+// Validation for PDF files
+const pdfFileValidation = Yup.mixed<File>()
+	.required("File is required")
+	.test("fileType", "Unsupported file format, only PDF allowed", (value) => {
+		if (value && value instanceof File) {
+			return value.type === allowedPDFType;
 		}
 		return false;
 	})
 	.test("fileSize", "File size is too large", (value) => {
 		if (value && value instanceof File) {
-			return value.size <= 5 * 1024 * 1024;
+			return value.size <= 5 * 1024 * 1024; // 5MB
 		}
 		return false;
 	});
+	const MIN_DATE = new Date();
+	MIN_DATE.setFullYear(MIN_DATE.getFullYear() - 21);
+	
+	export const mentorVerifyValidation = [
+		Yup.object().shape({
+			name: Yup.string().trim().required("Required"),
+			dateOfBirth: Yup.date()
+				.required("Required")
+				.max(new Date(), "Invalid")
+				.min(MIN_DATE, "You must be at least 21 years old"),
+			image: imageFileValidation, // Only allow images for 'image' field
+			about: Yup.string()
+				.trim()
+				.min(50, "About section must be at least 50 characters")
+				.max(200, "About section cannot exceed 200 characters")
+				.required("Required"),
+		}),
+		Yup.object().shape({
+			degree: Yup.string().trim().required("Required"),
+			college: Yup.string().trim().required("Required"),
+			yearOfGraduation: Yup.number()
+				.required("Required")
+				.min(1900, "Invalid")
+				.max(new Date().getFullYear(), "Invalid"),
+		}),
+		Yup.object().shape({
+			jobTitle: Yup.string().trim().required("Required"),
+			lastWorkedCompany: Yup.string().trim().required("Required"),
+			yearsOfExperience: Yup.number().required("Required").min(0, "Invalid"),
+			stack: Yup.string().trim().required("Required"),
+		}),
+		Yup.object().shape({
+			resume: pdfFileValidation,
+			degreeCertificate: pdfFileValidation,
+			experienceCertificate: pdfFileValidation, 
+		}),
+	];
+	
 
-const MIN_DATE = new Date();
-MIN_DATE.setFullYear(MIN_DATE.getFullYear() - 21);
-
-export const mentorVerifyValidation = [
-	Yup.object().shape({
-		name: Yup.string().trim().required("Required"),
-		dateOfBirth: Yup.date()
-			.required("Required")
-			.max(new Date(), "Invalid")
-			.min(MIN_DATE, "You must be at least 21 years old"),
-		image: fileValidation,
-		about: Yup.string()
-			.trim()
-			.min(50, "About section must be at least 50 characters")
-			.max(200, "About section cannot exceed 200 characters")
-			.required("Required"),
-	}),
-	Yup.object().shape({
-		degree: Yup.string().trim().required("Required"),
-		college: Yup.string().trim().required("Required"),
-		yearOfGraduation: Yup.number()
-			.required("Required")
-			.min(1900, "Invalid")
-			.max(new Date().getFullYear(), "Invalid"),
-	}),
-	Yup.object().shape({
-		jobTitle: Yup.string().trim().required("Required"),
-		lastWorkedCompany: Yup.string().trim().required("Required"),
-		yearsOfExperience: Yup.number().required("Required").min(0, "Invalid"),
-		stack: Yup.string().trim().required("Required"),
-	}),
-	Yup.object().shape({
-		resume: fileValidation,
-		degreeCertificate: fileValidation,
-		experienceCertificate: fileValidation,
-	}),
-];
-
-export const timeSheduleValidation = Yup.object({
-	date: Yup.string()
-		.required("Date is required")
-		.test(
-			"is-future-date",
-			"You can only shedule date from tomorrow's date",
-			(value) => {
-				if (!value) return false;
-				const inputDate = new Date(value);
-				const today = new Date();
-				today.setDate(today.getDate());
-				return inputDate >= today;
-			}
-		),
-	startTime: Yup.string()
-		.required("Start time is required")
-		.test(
-			"is-valid-time",
-			"Start time must be earlier than end time",
-			function (startTime) {
-				const { endTime } = this.parent;
-				if (!startTime || !endTime) return true;
-				return startTime < endTime;
-			}
-		),
-	endTime: Yup.string().required("End time is required"),
-	price: Yup.number()
-		.required("Price is required")
-		.positive("Price must be positive")
-		.test(
-			"is-indian-currency",
-			"Price must be in Indian currency format",
-			(value) => {
-				if (!value) return false;
-				const currencyFormat = /^[1-9]\d*(\.\d{1,2})?$/;
-				return currencyFormat.test(value.toString());
-			}
-		),
-});
+	export const timeSheduleValidation = Yup.object().shape({
+		scheduleType: Yup.string().oneOf(['normal', 'weekly', 'custom']).required('Schedule type is required'),
+		date: Yup.date().when('scheduleType', {
+			is: 'normal',
+			then: (schema) => schema.required('Date is required for normal scheduling')
+				.min(moment().add(1, 'days').startOf('day'), "Date must be tomorrow or later"),
+			otherwise: (schema) => schema.notRequired(),
+		}),
+		startTime: Yup.string().required('Start time is required'),
+		endTime: Yup.string().required('End time is required')
+			.test('is-greater', 'End time should be greater than start time', function(value) {
+				const { startTime } = this.parent;
+				return moment(value, "HH:mm").isAfter(moment(startTime, "HH:mm"));
+			}),
+		price: Yup.number().required('Price is required').positive('Price must be positive'),
+		daysOfWeek: Yup.array().when('scheduleType', {
+			is: 'weekly',
+			then: (schema) => schema.min(1, 'At least one day must be selected for weekly scheduling'),
+			otherwise: (schema) => schema.notRequired(),
+		}),
+		startDate: Yup.date().when('scheduleType', {
+			is: 'weekly',
+			then: (schema) => schema.required('Start date is required for weekly scheduling')
+				.min(moment().add(1, 'days').startOf('day'), "Start date must be tomorrow or later"),
+			otherwise: (schema) => schema.notRequired(),
+		}),
+		endDate: Yup.date().when('scheduleType', {
+			is: 'weekly',
+			then: (schema) => schema.required('End date is required for weekly scheduling')
+				.min(Yup.ref('startDate'), 'End date must be after start date'),
+			otherwise: (schema) => schema.notRequired(),
+		}),
+	});
 
 export const editProfileValidation = Yup.object().shape({
 	name: Yup.string().required("Name is required"),

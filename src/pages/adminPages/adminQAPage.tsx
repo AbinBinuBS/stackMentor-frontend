@@ -1,6 +1,6 @@
 import AdminDashboardSidebar from "../../components/adminComponents/Dashboard/adminDashboardSidebar";
 import AdminQABody from "../../components/adminComponents/QA/adminQABody";
-import AdminHeader from "../../components/commonComponents/adminHeader";
+import AdminHeader from "../../components/commonComponents/AdminHeader";
 
 const AdminQAPage = () => {
 	return (

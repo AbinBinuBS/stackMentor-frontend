@@ -27,10 +27,10 @@ const QASidebar: React.FC<QASidebarProps> = ({ isOpen, setIsOpen }) => {
                     fixed inset-0 bg-black bg-opacity-50 z-40
                     transition-opacity duration-300 ease-in-out
                     ${
-											isOpen
-												? "opacity-100 pointer-events-auto"
-												: "opacity-0 pointer-events-none"
-										}
+						isOpen
+						? "opacity-100 pointer-events-auto"
+						: "opacity-0 pointer-events-none"
+					}
                     lg:hidden
                 `}
 				onClick={toggleSidebar}

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import MenteeHeader from "../../components/commonComponents/MenteeHeader";
-import MySlotBody from "../../components/menteeComponents/MySlot/mySlotBody";
+import { useState } from "react";
+import MenteeHeader from "../../components/commonComponents/MenteeHeader"
 import AccountSidebar from "../../components/menteeComponents/Account/accountSidebar";
+import AccountBody from "../../components/menteeComponents/Account/accountBody";
 
-const MenteeSlotBookedPage: React.FC = () => {
+
+
+const MenteeAccountPage = () =>{
 	const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
     return(
@@ -14,11 +16,11 @@ const MenteeSlotBookedPage: React.FC = () => {
 					<AccountSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 				</div>
 				<div className="flex-grow">
-                <MySlotBody />
+                <AccountBody/>
 				</div>
 			</div>
 		</div>
     )
-};
+}
 
-export default MenteeSlotBookedPage;
+export default MenteeAccountPage

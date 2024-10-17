@@ -25,6 +25,7 @@ const MenteeSingleMentorBody: React.FC<MenteeSingleMentorBodyProps> = ({
 	const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 	const [isPaymentMethodModalOpen, setIsPaymentMethodModalOpen] =
 		useState(false);
+		const [loading, setLoading] = useState(false)
 
 	const filteredSlots = slots || [];
 	const indexOfLastSession: number = currentPage * sessionsPerPage;
@@ -49,6 +50,12 @@ const MenteeSingleMentorBody: React.FC<MenteeSingleMentorBodyProps> = ({
 		setSelectedSession(session);
 		setIsPaymentMethodModalOpen(true);
 	};
+
+	const handleSuccess = () =>{
+		setShowSuccessMessage(false)
+		if(!selectedSession)return 
+		onSlotUpdate(selectedSession._id);
+	}
 
 	const handlePaymentMethodSelection = async (method: "stripe" | "wallet") => {
 		setIsPaymentMethodModalOpen(false);
@@ -78,7 +85,6 @@ const MenteeSingleMentorBody: React.FC<MenteeSingleMentorBodyProps> = ({
 
 					if (data.message === "Success") {
 						setShowSuccessMessage(true);
-						onSlotUpdate(selectedSession._id);
 					}
 				} catch (error) {
 					if (error instanceof Error) {
@@ -113,7 +119,6 @@ const MenteeSingleMentorBody: React.FC<MenteeSingleMentorBodyProps> = ({
 				const { data } = await apiClientMentee.post(
 					`${LOCALHOST_URL}/api/mentees/menteePayment`,
 					{
-						sessionId: selectedSession._id,
 						amount: selectedSession.price,
 					}
 				);
@@ -132,9 +137,16 @@ const MenteeSingleMentorBody: React.FC<MenteeSingleMentorBodyProps> = ({
 						toast.error(result.error.message);
 					}
 				} else if (result.paymentIntent?.status === "succeeded") {
-					setIsModalOpen(false);
-					setShowSuccessMessage(true);
-					onSlotUpdate(selectedSession._id);
+					setLoading(true)
+					const { data } = await apiClientMentee.post(`${LOCALHOST_URL}/api/mentees/proceedPayment`,{sessionId: selectedSession._id})
+					if(data.message == "Success"){
+						setIsModalOpen(false);
+						setShowSuccessMessage(true);
+						setLoading(false)
+					}else{
+						setLoading(false)
+						toast.error("something happened please try again later")
+					}
 				}
 			}
 		} catch (error) {
@@ -197,9 +209,12 @@ const MenteeSingleMentorBody: React.FC<MenteeSingleMentorBodyProps> = ({
 						</button>
 						<button
 							onClick={processPayment}
-							className="px-6 py-3 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200"
+							className={`px-6 py-3 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200 ${
+								loading ? 'opacity-50 cursor-not-allowed' : ''
+							}`}
+							disabled={loading} 
 						>
-							Pay
+							{loading ? 'Processing...' : 'Pay'}
 						</button>
 					</div>
 				</div>
@@ -222,7 +237,7 @@ const MenteeSingleMentorBody: React.FC<MenteeSingleMentorBodyProps> = ({
 					</p>
 					<div className="flex justify-center">
 						<button
-							onClick={() => setShowSuccessMessage(false)}
+							onClick={handleSuccess}
 							className="px-6 py-3 bg-gradient-to-r from-[#1D2B6B] to-[#142057] text-white rounded-md font-medium hover:from-[#2A3F7E] hover:to-[#0A102E] transition duration-200"
 						>
 							OK

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import MenteeHeader from "../../components/commonComponents/menteeHeader";
+import MenteeHeader from "../../components/commonComponents/MenteeHeader";
 import QASidebar from "../../components/menteeComponents/Q&A/qaSidebar";
-import AskQuestionBody from "../../components/menteeComponents/askQuestion/askQuestionBody";
+import AskQuestionBody from "../../components/menteeComponents/AskQuestion/askQuestionBody";
 
 const AskQuestionPage = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);

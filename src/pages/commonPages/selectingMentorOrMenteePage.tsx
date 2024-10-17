@@ -1,5 +1,5 @@
-import MenteeHeader from "../../components/commonComponents/menteeHeader";
-import SelectingMentorOrMenteeBody from "../../components/commonComponents/selectingMentorOrMenteeBody";
+import MenteeHeader from "../../components/commonComponents/MenteeHeader";
+import SelectingMentorOrMenteeBody from "../../components/commonComponents/SelectingMentorOrMenteeBody";
 
 const SelectingMentorOrMenteePage = () => {
 	return (

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Calendar, ArrowLeft, Home } from "lucide-react";
-import MenteeHeader from "../../components/commonComponents/menteeHeader";
-import MenteeSingleMentorBody from "../../components/menteeComponents/mentorSinglepage/menteeSingleMentorBody";
-import MenteeSingleMentorSidebar from "../../components/menteeComponents/mentorSinglepage/menteeSingleMentorSidebar";
+import MenteeHeader from "../../components/commonComponents/MenteeHeader";
+import MenteeSingleMentorBody from "../../components/menteeComponents/MentorSinglepage/menteeSingleMentorBody";
+import MenteeSingleMentorSidebar from "../../components/menteeComponents/MentorSinglepage/menteeSingleMentorSidebar";
 import { LOCALHOST_URL } from "../../constants/constants";
-import { IMentorVerification, ISlot } from "../../interfaces/ImenteeInferfaces";
+import { IMentorVerification, IRating, ISlot } from "../../interfaces/ImenteeInferfaces";
 import toast from "react-hot-toast";
 
 const MenteeSignleMentorPage: React.FC = () => {
@@ -16,6 +16,7 @@ const MenteeSignleMentorPage: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
+	const [ratings,setRatings] = useState<IRating[] | null>(null)
 
 	useEffect(() => {
 		const getMentorData = async () => {
@@ -26,9 +27,11 @@ const MenteeSignleMentorPage: React.FC = () => {
 					`${LOCALHOST_URL}/api/mentees/getMentorData/${id}`
 				);
 				if (response.data.message === "Success") {
-					const { mentorData, slotsData } = response.data;
+					const { mentorData, slotsData,ratings } = response.data;
+					console.log(ratings)
 					setMentorData(mentorData);
 					setSlotsData(slotsData);
+					setRatings(ratings)
 				}
 			} catch (error) {
 				if (axios.isAxiosError(error) && error.response?.status === 500) {
@@ -123,7 +126,7 @@ const MenteeSignleMentorPage: React.FC = () => {
 								/>
 							</main>
 							<aside className="hidden lg:block lg:w-1/4 p-6 pt-16">
-								<MenteeSingleMentorSidebar mentor={mentor} />
+								<MenteeSingleMentorSidebar mentor={mentor} ratings={ratings}/>
 							</aside>
 						</div>
 					) : (

@@ -1,5 +1,5 @@
 import AdminMentorDetailsBody from "../../components/adminComponents/MentorDetails/adminMentorDetailsBody";
-import AdminHeader from "../../components/commonComponents/adminHeader";
+import AdminHeader from "../../components/commonComponents/AdminHeader";
 
 const AdminMentorSinglePage = () => {
 	return (
