@@ -1,4 +1,4 @@
-import MenteeHeader from "../../components/commonComponents/MenteeHeader";
+import MenteeHeader from "../../components/commonComponents/menteeHeader";
 import MenteeRedisterBody from "../../components/menteeComponents/Register/menteeRegisterBody";
 
 const MenteeRegister = () => {

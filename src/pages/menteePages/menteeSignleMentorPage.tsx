@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Calendar, ArrowLeft, Home } from "lucide-react";
-import MenteeHeader from "../../components/commonComponents/MenteeHeader";
+import MenteeHeader from "../../components/commonComponents/menteeHeader";
 import MenteeSingleMentorBody from "../../components/menteeComponents/MentorSinglepage/menteeSingleMentorBody";
 import MenteeSingleMentorSidebar from "../../components/menteeComponents/MentorSinglepage/menteeSingleMentorSidebar";
 import { LOCALHOST_URL } from "../../constants/constants";

@@ -1,5 +1,5 @@
 import Footer from "../../components/commonComponents/Footer";
-import MenteeHeader from "../../components/commonComponents/MenteeHeader";
+import MenteeHeader from "../../components/commonComponents/menteeHeader";
 import MenteeHomeBody from "../../components/menteeComponents/LandingPageComponents/landingBody";
 
 const LandingPage = () => {

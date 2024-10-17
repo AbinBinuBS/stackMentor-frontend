@@ -1,4 +1,4 @@
-import MenteeHeader from "../../components/commonComponents/MenteeHeader";
+import MenteeHeader from "../../components/commonComponents/menteeHeader";
 import MenteeOtpBody from "../../components/menteeComponents/Register/otpRegisterBody";
 
 const OtpPage = () => {
