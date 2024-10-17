@@ -3,7 +3,7 @@ import ChatBody from "../../components/chatComponents/chatBody";
 import apiClientMentee from "../../services/apiClientMentee";
 import { LOCALHOST_URL } from "../../constants/constants";
 import { User } from "../../interfaces/IChatMenteeInterface";
-import MenteeHeader from "../../components/commonComponents/mentorHeader";
+import MenteeHeader from "../../components/commonComponents/menteeHeader";
 
 
 
