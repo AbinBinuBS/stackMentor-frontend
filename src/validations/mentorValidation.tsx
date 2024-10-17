@@ -30,7 +30,6 @@ export const MentorsignupValidation = Yup.object({
 const allowedImageTypes: string[] = ["image/jpeg", "image/png"];
 const allowedPDFType: string = "application/pdf";
 
-// Validation for image files
 const imageFileValidation = Yup.mixed<File>()
 	.required("File is required")
 	.test("fileType", "Unsupported image format", (value) => {
