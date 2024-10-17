@@ -37,6 +37,7 @@ const MenteeHeader: React.FC = () => {
   const notifications = useSelector((state: RootState) => state.chat.notification) || [];
 
   useEffect(() => {
+    console.log("111111111")
     if (accessToken && !user) {
       fetchMenteeData();
       fetchNotifications();
