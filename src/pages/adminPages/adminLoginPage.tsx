@@ -1,5 +1,5 @@
 import AdminLoginBody from "../../components/adminComponents/Login/adminLoginBody";
-import AdminSidebar from "../../components/commonComponents/AdminSidebar";
+import AdminSidebar from "../../components/commonComponents/adminSidebar";
 
 const MentorLogin = () => {
 	return (

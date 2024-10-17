@@ -1,5 +1,5 @@
 import React from "react";
-import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
+import MentorAccountSidebar from "../../components/commonComponents/mentorAccountSidebar";
 import MentorHeader from "../../components/commonComponents/mentorHeader";
 import MentorBookedSlotsBody from "../../components/mentorComponents/BookedSlots/mentorBookedSlotsBody";
 

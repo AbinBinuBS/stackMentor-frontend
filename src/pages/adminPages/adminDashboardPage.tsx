@@ -1,5 +1,5 @@
 import React from "react";
-import AdminHeader from "../../components/commonComponents/AdminHeader";
+import AdminHeader from "../../components/commonComponents/adminHeader";
 import AdminDashboardSidebar from "../../components/adminComponents/Dashboard/adminDashboardSidebar";
 import AdminHeaderSideHeader from "../../components/adminComponents/Dashboard/adminDashboardSideHeader";
 

@@ -1,6 +1,6 @@
 import AdminDashboardSidebar from "../../components/adminComponents/Dashboard/adminDashboardSidebar";
 import AdminUserListBody from "../../components/adminComponents/UserList/adminUserListBody";
-import AdminHeader from "../../components/commonComponents/AdminHeader";
+import AdminHeader from "../../components/commonComponents/adminHeader";
 
 const AdminUserListPage = () => {
 	return (

@@ -1,4 +1,4 @@
-import MentorSidebar from "../../components/commonComponents/MentorSidebar.tsx";
+import MentorSidebar from "../../components/commonComponents/mentorSidebar.tsx";
 import MentorLoginBody from "../../components/mentorComponents/Login/mentorLoginBody.tsx";
 
 const MentorLoginPage = () => {

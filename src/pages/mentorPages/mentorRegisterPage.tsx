@@ -1,4 +1,4 @@
-import MentorSidebar from "../../components/commonComponents/MentorSidebar";
+import MentorSidebar from "../../components/commonComponents/mentorSidebar";
 import MentorRegistorBody from "../../components/mentorComponents/Register/mentorRegistorBody";
 
 const MentorRegisterPage = () => {

@@ -1,6 +1,6 @@
-import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
+import MentorAccountSidebar from "../../components/commonComponents/mentorAccountSidebar";
 import MentorHeader from "../../components/commonComponents/mentorHeader";
-import CommunityMeetBody from "../../components/mentorComponents/Community meet/communityMeetBody";
+import CommunityMeetBody from "../../components/mentorComponents/community meet/communityMeetBody";
 
 const CommunityMeetPage = () => {
 	return (

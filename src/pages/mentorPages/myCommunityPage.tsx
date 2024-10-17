@@ -1,4 +1,4 @@
-import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
+import MentorAccountSidebar from "../../components/commonComponents/mentorAccountSidebar";
 import MentorHeader from "../../components/commonComponents/mentorHeader";
 import MyCommunityBody from "../../components/mentorComponents/My-Community-Meet/myCommunityBody";
 
