@@ -1,6 +1,6 @@
+import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
 import MentorHeader from "../../components/commonComponents/MentorHeader";
 import MentorAccountBody from "../../components/mentorComponents/Account/mentorAccountBody";
-import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
 
 const MentorAccountPage = () => {
 	return (
@@ -17,3 +17,4 @@ const MentorAccountPage = () => {
 };
 
 export default MentorAccountPage;
+
