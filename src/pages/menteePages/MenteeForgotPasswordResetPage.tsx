@@ -1,4 +1,4 @@
-import MenteeHeader from "../../components/commonComponents/MenteeHeader";
+import MenteeHeader from "../../components/commonComponents/MenteeHeader.tsx";
 import MenteeForgotPasswordResetBody from "../../components/menteeComponents/ForgotPassword/menteeForgotPasswordResetBody";
 
 const MenteeForgotPasswordReset = () => {
