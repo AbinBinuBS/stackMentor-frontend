@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MenteeHeader from "../../components/commonComponents/menteeHeader";
-import WalletBody from "../../components/menteeComponents/Wallet/walletBody";
+import WalletBody from "../../components/menteeComponents/wallet/walletBody";
 import AccountSidebar from "../../components/menteeComponents/Account/accountSidebar";
 
 const WalletPage: React.FC = () => {

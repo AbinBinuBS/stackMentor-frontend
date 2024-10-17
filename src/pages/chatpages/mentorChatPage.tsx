@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import MentorChatBody from "../../components/chatComponents/MentorChatBody";
 import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
-import MentorHeader from "../../components/commonComponents/MentorHeader";
+import MentorHeader from "../../components/commonComponents/mentorHeader";
 import apiClient from "../../services/apiClient";
 import { LOCALHOST_URL } from "../../constants/constants";
 import { User } from "../../interfaces/IChatMentorInterface";

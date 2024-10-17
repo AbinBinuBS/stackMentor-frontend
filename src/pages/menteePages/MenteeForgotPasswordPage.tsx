@@ -1,5 +1,5 @@
 import MenteeHeader from "../../components/commonComponents/menteeHeader";
-import MenteeForgotPasswordBody from "../../components/menteeComponents/ForgotPassword/menteeForgotPassword";
+import MenteeForgotPasswordBody from "../../components/menteeComponents/forgotPassword/menteeForgotPassword";
 
 const MenteeForgotPassword = () => {
 	return (

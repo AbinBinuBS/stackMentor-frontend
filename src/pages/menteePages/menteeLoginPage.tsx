@@ -1,5 +1,5 @@
 import MenteeHeader from "../../components/commonComponents/menteeHeader";
-import MenteeLoginBody from "../../components/menteeComponents/MenteeLogin/menteeLoginBody";
+import MenteeLoginBody from "../../components/menteeComponents/menteeLogin/menteeLoginBody";
 
 const MenteeLogin = () => {
 	return (

@@ -1,5 +1,5 @@
 import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar"
-import MentorHeader from "../../components/commonComponents/MentorHeader"
+import MentorHeader from "../../components/commonComponents/mentorHeader"
 import QABody from "../../components/mentorComponents/QA/qaBody"
 
 

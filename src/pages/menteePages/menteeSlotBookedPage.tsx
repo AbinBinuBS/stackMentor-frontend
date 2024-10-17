@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MenteeHeader from "../../components/commonComponents/menteeHeader";
-import MySlotBody from "../../components/menteeComponents/MySlot/mySlotBody";
+import MySlotBody from "../../components/menteeComponents/mySlot/mySlotBody";
 import AccountSidebar from "../../components/menteeComponents/Account/accountSidebar";
 
 const MenteeSlotBookedPage: React.FC = () => {

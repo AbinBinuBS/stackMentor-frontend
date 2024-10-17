@@ -1,5 +1,5 @@
 import MenteeHeader from "../../components/commonComponents/menteeHeader";
-import MentorDisplayBody from "../../components/menteeComponents/MentorDisplay/mentorDisplayBody";
+import MentorDisplayBody from "../../components/menteeComponents/mentorDisplay/mentorDisplayBody";
 
 const MenteeDisplayMentorPage = () => {
 	return (

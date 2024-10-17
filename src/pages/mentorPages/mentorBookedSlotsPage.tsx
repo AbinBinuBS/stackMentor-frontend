@@ -1,6 +1,6 @@
 import React from "react";
 import MentorAccountSidebar from "../../components/commonComponents/MentorAccountSidebar";
-import MentorHeader from "../../components/commonComponents/MentorHeader";
+import MentorHeader from "../../components/commonComponents/mentorHeader";
 import MentorBookedSlotsBody from "../../components/mentorComponents/BookedSlots/mentorBookedSlotsBody";
 
 const MentorBookedSlotsPage: React.FC = () => {

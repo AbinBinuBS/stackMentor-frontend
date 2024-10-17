@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import ChatBody from "../../components/chatComponents/ChatBody";
+import ChatBody from "../../components/chatComponents/chatBody";
 import apiClientMentee from "../../services/apiClientMentee";
 import { LOCALHOST_URL } from "../../constants/constants";
 import { User } from "../../interfaces/IChatMenteeInterface";
-import MenteeHeader from "../../components/commonComponents/MentorHeader";
+import MenteeHeader from "../../components/commonComponents/mentorHeader";
 
 
 

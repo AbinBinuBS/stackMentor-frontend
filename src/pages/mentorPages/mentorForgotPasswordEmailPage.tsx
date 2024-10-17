@@ -1,5 +1,5 @@
 import MentorSidebar from "../../components/commonComponents/MentorSidebar";
-import MentorForgotPasswordEmailBody from "../../components/mentorComponents/Forgot Password/mentorForgotPasswordBody";
+import MentorForgotPasswordEmailBody from "../../components/mentorComponents/forgot Password/mentorForgotPasswordBody";
 
 const MentorForgotPasswordEmailPage = () => {
 	return (
