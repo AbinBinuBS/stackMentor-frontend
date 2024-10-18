@@ -37,7 +37,6 @@ const MenteeHeader: React.FC = () => {
   const notifications = useSelector((state: RootState) => state.chat.notification) || [];
 
   useEffect(() => {
-    console.log("1111111111")
     if (accessToken && !user) {
       fetchMenteeData();
       fetchNotifications();
@@ -90,7 +89,6 @@ const MenteeHeader: React.FC = () => {
       }
     } catch (error) {
       console.error("Error fetching mentee details:", error);
-      toast.error("Failed to fetch mentee details");
     }
   };
 

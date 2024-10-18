@@ -1,20 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Clock, Calendar as CalendarIcon, ChevronDown, ChevronUp, Loader } from "lucide-react";
+import { Calendar, Clock, Calendar as CalendarIcon, ChevronDown, ChevronUp, Loader, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../../services/apiClient";
 import { LOCALHOST_URL } from "../../../constants/constants";
 import { ICommunityMeet } from "../../../interfaces/mentorInterfaces";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const MyCommunityBody: React.FC = () => {
   const [communityMeets, setCommunityMeets] = useState<ICommunityMeet[]>([]);
+  const [filteredMeets, setFilteredMeets] = useState<ICommunityMeet[]>([]);
   const [expandedMeetId, setExpandedMeetId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [meetsPerPage] = useState(5);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterDate, setFilterDate] = useState<Date | null>(null);
   const navigate = useNavigate();
   
   useEffect(() => {
     fetchMeetData();
   }, []);
+
+  useEffect(() => {
+    filterAndSearchMeets();
+  }, [communityMeets, searchTerm, filterDate]);
 
   const fetchMeetData = async () => {
     setIsLoading(true);
@@ -37,6 +48,33 @@ const MyCommunityBody: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const filterAndSearchMeets = () => {
+    let filtered = communityMeets;
+
+    if (searchTerm) {
+      const lowercasedSearchTerm = searchTerm.toLowerCase();
+      filtered = filtered.filter((meet) =>
+        meet.mentorInfo.name.toLowerCase().includes(lowercasedSearchTerm) ||
+        meet.stack.toLowerCase().includes(lowercasedSearchTerm) ||
+        meet.about.toLowerCase().includes(lowercasedSearchTerm)
+      );
+    }
+
+    if (filterDate) {
+      filtered = filtered.filter((meet) => {
+        const meetDate = new Date(meet.date);
+        return (
+          meetDate.getFullYear() === filterDate.getFullYear() &&
+          meetDate.getMonth() === filterDate.getMonth() &&
+          meetDate.getDate() === filterDate.getDate()
+        );
+      });
+    }
+
+    setFilteredMeets(filtered);
+    setCurrentPage(1);
   };
 
   const formatTime = (time: string) => {
@@ -88,17 +126,58 @@ const MyCommunityBody: React.FC = () => {
     navigate(`/mentor/community/room/${roomId}`);
   };
 
+  // Pagination logic
+  const indexOfLastMeet = currentPage * meetsPerPage;
+  const indexOfFirstMeet = indexOfLastMeet - meetsPerPage;
+  const currentMeets = filteredMeets.slice(indexOfFirstMeet, indexOfLastMeet);
+  const totalPages = Math.ceil(filteredMeets.length / meetsPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   if (isLoading) {
     return <LoadingMessage />;
   }
 
   return (
-    <div className="flex justify-center items-start">
+    <div className="flex flex-col items-center">
+      <div className="w-full max-w-2xl mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-800">My Community Meets</h2>
+          <div className="flex items-center space-x-2">
+            <DatePicker
+              selected={filterDate}
+              onChange={(date: Date | null) => setFilterDate(date)}
+              dateFormat="MMMM d, yyyy"
+              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+              placeholderText="Filter by date"
+            />
+            {filterDate && (
+              <button
+                onClick={() => setFilterDate(null)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search meets..."
+                className="border border-gray-300 rounded-md pl-10 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-2xl w-full space-y-6">
-        {communityMeets.length === 0 ? (
+        {filteredMeets.length === 0 ? (
           <NoDataMessage />
         ) : (
-          communityMeets.map((meet) => {
+          currentMeets.map((meet) => {
             const status = isOngoing(meet.date, meet.startTime, meet.endTime);
             return (
               <div key={meet._id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -160,6 +239,29 @@ const MyCommunityBody: React.FC = () => {
               </div>
             );
           })
+        )}
+
+        {/* Pagination */}
+        {filteredMeets.length > meetsPerPage && (
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="mr-2 px-3 py-1 bg-violet-500 text-white rounded-md disabled:opacity-50"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <span className="mx-2 text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="ml-2 px-3 py-1 bg-violet-500 text-white rounded-md disabled:opacity-50"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         )}
       </div>
     </div>

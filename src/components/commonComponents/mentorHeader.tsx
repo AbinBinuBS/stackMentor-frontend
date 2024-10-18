@@ -89,14 +89,12 @@ const MentorHeader: React.FC = () => {
       }
     } catch (error) {
       console.error("Error fetching mentor details:", error);
-      toast.error("Failed to fetch mentor details");
     }
   };
 
   const handleNewNotification = (notification: Notification) => {
     if (selectedChat && selectedChat._id === notification.chatId.toString()) {
       markSeenMessage(selectedChat._id);
-      toast.success(`Message read`);
       return;
     }
     dispatch(addMentorNotification(notification));
