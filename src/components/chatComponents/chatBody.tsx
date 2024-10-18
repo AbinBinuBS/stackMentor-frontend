@@ -9,9 +9,7 @@ import {
   sendMessage, 
   handleTyping, 
   stopTyping, 
-  onMessageReceived, 
-  onTyping, 
-  onStopTyping, 
+  onMessageReceived,  
   initializeSocket,
   disconnectSocket
 } from '../../services/socketManager';
@@ -65,13 +63,12 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
   const [newMessage, setNewMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [typing, setTyping] = useState<boolean>(false);
-  const [isTyping, setIsTyping] = useState<boolean>(false);
+  // const [isTyping, setIsTyping] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    console.log("ssssssssssssssssss",selectedChat)
     if (!selectedChat || !user) return;
   
     initializeSocket(user.id);
@@ -90,8 +87,8 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
       }
     });
   
-    onTyping(() => setIsTyping(true));
-    onStopTyping(() => setIsTyping(false));
+    // onTyping(() => setIsTyping(true));
+    // onStopTyping(() => setIsTyping(false));
   
     return () => {
       disconnectSocket(); 
@@ -209,7 +206,7 @@ const ChatBody: React.FC<{ user: User }> = ({ user }) => {
               {selectedChat.mentor?.name || 'Unknown Mentor'}
             </span>
             <span className="text-xs text-gray-300 h-4">
-              {isTyping ? 'Typing...' : '...'}
+              {/* {isTyping ? 'Typing...' : '...'} */}
             </span>
           </div>
         </div>

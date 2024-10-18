@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import MentorChatBody from "../../components/chatComponents/mentorChatBody";
-import MentorAccountSidebar from "../../components/commonComponents/mentorAccountSidebar";
 import MentorHeader from "../../components/commonComponents/mentorHeader";
 import apiClient from "../../services/apiClient";
 import { LOCALHOST_URL } from "../../constants/constants";
@@ -41,8 +40,7 @@ const MentorChatPage = () => {
 		<div className="flex flex-col min-h-screen">
 			<MentorHeader />
 			<div className="flex flex-1 bg-slate-50 overflow-y-auto">
-				<MentorAccountSidebar />
-				<main className="flex-1 ml-96 mt-40 overflow-y-auto">
+				<main className="flex-1 mx-10 mt-40 overflow-y-auto">
 					{user ? <MentorChatBody user={user} /> : <div>Loading...</div>}
 				</main>
 			</div>

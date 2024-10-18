@@ -11,9 +11,7 @@ import {
     sendMessage, 
     handleTyping, 
     stopTyping, 
-    onMessageReceived, 
-    onTyping, 
-    onStopTyping, 
+    onMessageReceived,  
     disconnectSocket 
 } from "../../services/socketManager"; 
 import { LOCALHOST_URL } from "../../constants/constants";
@@ -50,7 +48,7 @@ const MentorChatBody: React.FC<MentorChatBodyProps> = ({ user }) => {
     const [loadingMessages, setLoadingMessages] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const [isTyping, setIsTyping] = useState<boolean>(false);
+    // const [isTyping, setIsTyping] = useState<boolean>(false);
     const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const scrollToBottom = () => {
@@ -64,8 +62,8 @@ const MentorChatBody: React.FC<MentorChatBodyProps> = ({ user }) => {
             joinChatRoom(selectedChat._id);
         }
 
-        onTyping(() => setIsTyping(true));
-        onStopTyping(() => setIsTyping(false));
+        // onTyping(() => setIsTyping(true));
+        // onStopTyping(() => setIsTyping(false));
         onMessageReceived((newMessage: Message) => {
             if (selectedChat?._id === newMessage.chat._id) {
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -178,7 +176,7 @@ const MentorChatBody: React.FC<MentorChatBodyProps> = ({ user }) => {
                             {selectedChat.mentee ? selectedChat.mentee.name : "Unknown Mentee"}
                         </span>
                         <span className="text-xs text-gray-300 h-4">
-                            {isTyping ? "Typing..." : "\u00A0"}
+                            {/* {isTyping ? "Typing..." : "\u00A0"} */}
                         </span>
                     </div>
                 </div>

@@ -151,8 +151,18 @@ const MentorBookedSlotsBody: React.FC = () => {
   
 
   if (!bookedSlots.length) {
-    return <div className="p-4">No booked slots available.</div>;
+    return (
+      <div className="p-6 bg-white text-purple-500 rounded-md shadow-md w-3/4 mx-auto mt-10 flex flex-col items-center">
+        <svg className="w-12 h-12 mb-4 text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 0h6m-6 0v2a2 2 0 002 2h2a2 2 0 002-2v-2m-6 0h6M12 9v2m0 0V9m0 0h2m-2 0h-2" />
+        </svg>
+        <h2 className="text-lg font-bold">No Booked Slots Available</h2>
+        <p className="mt-4 text-sm">It seems there are no slots booked right now. Please check back later!</p>
+      </div>
+    );
   }
+  
+  
 
   const totalPages = Math.ceil(bookedSlots.length / slotsPerPage);
 

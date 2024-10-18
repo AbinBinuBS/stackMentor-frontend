@@ -95,7 +95,6 @@ const MenteeHeader: React.FC = () => {
   const handleNewNotification = (notification: Notification) => {
     if (selectedChat && selectedChat._id === notification.chatId.toString()) {
       markSeenMessage(selectedChat._id)
-      toast.success(`Message read`);
       return;
     }
     dispatch(addNotification(notification));

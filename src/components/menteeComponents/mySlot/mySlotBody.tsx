@@ -383,7 +383,9 @@ const MySlotBody: React.FC = () => {
                             </div>
                         ))
                     ) : (
-                        <p className="text-sm">No slots available.</p>
+                        <p className="text-sm bg-gradient-to-r mt-36 from-[#1D2B6B] to-[#142057] bg-clip-text text-transparent font-semibold bg-red-100 border border-red-400 rounded-md p-2 text-center">
+                        No slots available.
+                      </p>                      
                     )}
                 </div>
                 <div className="mt-3 flex justify-center">

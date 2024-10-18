@@ -163,40 +163,67 @@ const QABody: React.FC = () => {
 			</div>
 
 			<div className="overflow-y-auto flex-grow">
-				<div className="space-y-3">
-					{filteredQuestions.map((question, index) => (
-						<div key={index} className="border border-gray-200 rounded-md p-3">
-							<h3 className="text-md font-medium mb-1">{question.title}</h3>
-							<p className="text-sm text-gray-600 mb-2 line-clamp-2">
-								{question.body}
-							</p>
+    {filteredQuestions.length === 0 ? (
+        <div className="flex flex-col justify-center items-center h-full">
+            <div className="text-center">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-16 w-16 text-gray-400 mx-auto"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 12h6m2 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                </svg>
+                <p className="mt-4 text-gray-600">
+                    {activeTab === "unanswered"
+                        ? "No unanswered questions at the moment. Check back later!"
+                        : "You haven't answered any questions yet."}
+                </p>
+            </div>
+        </div>
+    ) : (
+        <div className="space-y-3">
+            {filteredQuestions.map((question, index) => (
+                <div key={index} className="border border-gray-200 rounded-md p-3">
+                    <h3 className="text-md font-medium mb-1">{question.title}</h3>
+                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                        {question.body}
+                    </p>
 
-							{question.isAnswered && activeTab === "myAnswers" && (
-								<div>
-									<p className="text-sm text-green-600 mb-2">
-										Answer: {question.reply}
-									</p>
-									<button
-										onClick={() => handleEditClick(question)}
-										className="px-3 py-1 text-xs bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-									>
-										Edit
-									</button>
-								</div>
-							)}
+                    {question.isAnswered && activeTab === "myAnswers" && (
+                        <div>
+                            <p className="text-sm text-green-600 mb-2">
+                                Answer: {question.reply}
+                            </p>
+                            <button
+                                onClick={() => handleEditClick(question)}
+                                className="px-3 py-1 text-xs bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                            >
+                                Edit
+                            </button>
+                        </div>
+                    )}
 
-							{activeTab === "unanswered" && (
-								<button
-									onClick={() => handleAnswerClick(question)}
-									className="px-3 py-1 text-xs bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-								>
-									Answer
-								</button>
-							)}
-						</div>
-					))}
-				</div>
-			</div>
+                    {activeTab === "unanswered" && (
+                        <button
+                            onClick={() => handleAnswerClick(question)}
+                            className="px-3 py-1 text-xs bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                        >
+                            Answer
+                        </button>
+                    )}
+                </div>
+            ))}
+        </div>
+    )}
+</div>
+
 
 			{isModalOpen && selectedQuestion && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

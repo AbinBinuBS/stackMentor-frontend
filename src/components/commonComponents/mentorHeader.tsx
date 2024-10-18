@@ -27,7 +27,6 @@ interface Notification {
 const MentorHeader: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -106,7 +105,7 @@ const MentorHeader: React.FC = () => {
   const handleLogout = () => {
     dispatch(mentorLogout());
     toast.success("Logged out successfully.");
-    navigate("/login");
+    navigate("/mentor");
   };
 
 
@@ -153,6 +152,7 @@ const MentorHeader: React.FC = () => {
         { id: notif.sender }
       );
       if (response.data.message === "Success") {
+        markSeenMessage(notif.sender)
         dispatch(setSelectedChatMentor(response.data.chat));
         navigate("/mentor/chat");
       }
@@ -182,7 +182,7 @@ const MentorHeader: React.FC = () => {
   const NavItem = ({ text, onClick }: { text: string; onClick: () => void }) => (
     <button
       onClick={onClick}
-      className="text-black font-semibold py-2 px-4 hover:bg-gray-100 w-full text-left"
+      className="text-purple-600 font-semibold py-2 px-4 hover:bg-gray-100 w-full text-left"
     >
       {text}
     </button>
@@ -208,38 +208,16 @@ const MentorHeader: React.FC = () => {
             <NavItem text="Home" onClick={() => navigate("/mentor/home")} />
             <NavItem text="Account" onClick={() => navigate('/mentor/account')} />
             <div className="relative">
-            <button
-              className="text-purple-600 hover:text-purple-800 font-semibold"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            >
-              More
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 inline-block ml-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            {isDropdownOpen && (
               <button
+                className="text-purple-600 hover:text-purple-800 font-semibold"
                 onClick={handleLogout}
-                className="absolute right-0 mt-2 px-4 py-2 text-sm text-purple-600 hover:text-purple-800 font-semibold bg-white rounded shadow-md"
               >
                 Logout
               </button>
-            )}
-          </div>
+            </div>
             <div className="relative">
               <button
-                className="text-black font-semibold"
+                className="text-purple-600 font-semibold"
                 onClick={() => setIsNotificationOpen(!isNotificationOpen)}
               >
                 <Bell size={24} />
@@ -268,16 +246,60 @@ const MentorHeader: React.FC = () => {
               )}
             </div>
           </nav>
-          <button
-            className="md:hidden flex items-center"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <Menu size={24} />
-          </button>
+          <div className="md:hidden flex items-center">
+            <div className="relative mr-4">
+              <button
+                className="text-purple-600 font-semibold"
+                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+              >
+                <Bell size={24} />
+                {notifications.length > 0 && (
+                  <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
+              {isNotificationOpen && (
+                <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-md w-80">
+                  <div className="max-h-60 overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      renderNotifications()
+                    ) : (
+                      <div className="p-4 text-gray-500 text-sm">No notifications</div>
+                    )}
+                  </div>
+                  <button
+                    onClick={handleClearNotifications}
+                    className="w-full bg-gray-200 hover:bg-gray-300 text-purple-600 font-semibold py-2 rounded-b"
+                  >
+                    Clear Notifications
+                  </button>
+                </div>
+              )}
+            </div>
+            <button
+              className="flex items-center text-purple-600"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <Menu size={24} />
+            </button>
+          </div>
         </div>
       </header>
+  
+      {isMenuOpen && (
+        <div className="absolute top-16 right-0 bg-white shadow-lg rounded-md">
+          <nav className="flex flex-col p-4">
+            <NavItem text="Home" onClick={() => { navigate("/mentor/home"); setIsMenuOpen(false); }} />
+            <NavItem text="Account" onClick={() => { navigate('/mentor/account'); setIsMenuOpen(false); }} />
+            <button onClick={handleLogout} className="text-purple-600 font-semibold">Logout</button>
+          </nav>
+        </div>
+      )}
     </div>
   );
+    
+  
 };
 
 export default MentorHeader;

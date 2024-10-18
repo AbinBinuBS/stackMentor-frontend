@@ -24,14 +24,14 @@ const MentorHomeBody: React.FC = () => {
 			</div>
 			<div className="flex flex-col lg:flex-row items-center justify-around w-full h-auto my-16 p-6 lg:p-12">
 				<a
-					href="/connect-with-mentee"
+					href="/mentor/booked-slot"
 					className="w-full lg:w-80 h-44 bg-purple-100 flex items-center justify-center rounded-lg shadow-md mb-4 lg:mb-0"
 				>
 					<i className="fa-solid fa-chalkboard-teacher text-4xl mx-4 text-purple-800"></i>
 					<h2 className="text-xl text-purple-900">Connect with Mentee</h2>
 				</a>
 				<a
-					href="/resolve-questions"
+					href="/mentor/qa"
 					className="w-full lg:w-80 h-44 bg-purple-100 flex items-center justify-center rounded-lg shadow-md mb-4 lg:mb-0"
 				>
 					<i className="fa-solid fa-handshake text-4xl mx-4 text-purple-800"></i>
