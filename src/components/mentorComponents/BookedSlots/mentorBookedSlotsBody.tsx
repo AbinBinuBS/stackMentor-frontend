@@ -167,53 +167,114 @@ const MentorBookedSlotsBody: React.FC = () => {
   const totalPages = Math.ceil(bookedSlots.length / slotsPerPage);
 
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Booked Slots</h1>
-      <div className="overflow-x-auto">
+    <div className="w-full max-w-4xl mx-auto xl:ml-96 bg-white shadow-lg rounded-lg p-4">
+      <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Booked Slots</h1>
+      
+      {/* Mobile view - Card layout */}
+      <div className="md:hidden space-y-4">
+        {currentSlots?.map((slot) => (
+          <div key={slot._id.toString()} className="border rounded-lg p-4 space-y-2">
+            <div className="flex justify-between">
+              <span className="font-medium">Date:</span>
+              <span>{new Date(slot.date).toLocaleDateString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium">Start Time:</span>
+              <span>{slot.startTime}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium">End Time:</span>
+              <span>{slot.endTime}</span>
+            </div>
+            <div className="pt-2">
+              {slot.bookingData.status === 'completed' ? (
+                <span className="text-green-500">Completed</span>
+              ) : slot.bookingData.status === 'cancelled' ? (
+                <span className="text-red-500">Cancelled</span>
+              ) : slot.bookingData.isAllowed ? (
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => handleChat(slot)}
+                    className="text-white bg-purple-500 hover:bg-purple-700 py-1 px-3 rounded text-sm"
+                  >
+                    Chat
+                  </button>
+                  <button
+                    onClick={() => handleVideoCall(slot)}
+                    className="text-white bg-purple-500 hover:bg-purple-700 py-1 px-3 rounded text-sm"
+                  >
+                    Video Call
+                  </button>
+                  <button
+                    onClick={() => handleEndConnection(slot)}
+                    className="text-white bg-red-500 hover:bg-red-700 py-1 px-3 rounded text-sm"
+                  >
+                    End Connection
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleConnect(slot)}
+                  className="text-white bg-green-500 hover:bg-green-700 py-1 px-3 rounded text-sm"
+                >
+                  Connect
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop view - Table layout */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr>
-              <th className="py-2 px-2 sm:px-4 border-b">Date</th>
-              <th className="py-2 px-2 sm:px-4 border-b">Start Time</th>
-              <th className="py-2 px-2 sm:px-4 border-b">End Time</th>
-              <th className="py-2 px-2 sm:px-4 border-b">Action</th>
+              <th className="py-2 px-4 border-b">Date</th>
+              <th className="py-2 px-4 border-b">Start Time</th>
+              <th className="py-2 px-4 border-b">End Time</th>
+              <th className="py-2 px-4 border-b">Action</th>
             </tr>
           </thead>
           <tbody>
             {currentSlots?.map((slot) => (
               <tr key={slot._id.toString()}>
-                <td className="py-2 px-2 sm:px-4 border-b">
+                <td className="py-2 px-4 border-b">
                   {new Date(slot.date).toLocaleDateString()}
                 </td>
-                <td className="py-2 px-2 sm:px-4 border-b">{slot.startTime}</td>
-                <td className="py-2 px-2 sm:px-4 border-b">{slot.endTime}</td>
-                <td className="py-2 px-2 sm:px-4 border-b">
+                <td className="py-2 px-4 border-b">{slot.startTime}</td>
+                <td className="py-2 px-4 border-b">{slot.endTime}</td>
+                <td className="py-2 px-4 border-b">
                   {slot.bookingData.status === 'completed' ? (
                     <span className="text-green-500">Completed</span>
                   ) : slot.bookingData.status === 'cancelled' ? (
                     <span className="text-red-500">Cancelled</span>
                   ) : slot.bookingData.isAllowed ? (
                     <div className="flex flex-wrap gap-2">
-                      <button 
+                      <button
                         onClick={() => handleChat(slot)}
-                        className="text-white bg-purple-500 hover:bg-purple-700 py-1 px-2 sm:px-3 rounded text-sm sm:text-base">
+                        className="text-white bg-purple-500 hover:bg-purple-700 py-1 px-3 rounded text-base"
+                      >
                         Chat
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleVideoCall(slot)}
-                        className="text-white bg-purple-500 hover:bg-purple-700 py-1 px-2 sm:px-3 rounded text-sm sm:text-base">
+                        className="text-white bg-purple-500 hover:bg-purple-700 py-1 px-3 rounded text-base"
+                      >
                         Video Call
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleEndConnection(slot)}
-                        className="text-white bg-red-500 hover:bg-red-700 py-1 px-2 sm:px-3 rounded text-sm sm:text-base">
+                        className="text-white bg-red-500 hover:bg-red-700 py-1 px-3 rounded text-base"
+                      >
                         End Connection
                       </button>
                     </div>
                   ) : (
-                    <button 
+                    <button
                       onClick={() => handleConnect(slot)}
-                      className="text-white bg-green-500 hover:bg-green-700 py-1 px-2 sm:px-3 rounded text-sm sm:text-base">
+                      className="text-white bg-green-500 hover:bg-green-700 py-1 px-3 rounded text-base"
+                    >
                       Connect
                     </button>
                   )}
@@ -223,12 +284,16 @@ const MentorBookedSlotsBody: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
       <div className="flex justify-center mt-4 flex-wrap">
         {Array.from({ length: totalPages }, (_, index) => (
           <button
             key={index}
             onClick={() => paginate(index + 1)}
-            className={`py-1 px-2 sm:px-3 m-1 rounded text-sm sm:text-base ${index + 1 === currentPage ? 'bg-purple-700 text-white' : 'bg-gray-200'}`}
+            className={`py-1 px-3 m-1 rounded text-sm md:text-base ${
+              index + 1 === currentPage ? 'bg-purple-700 text-white' : 'bg-gray-200'
+            }`}
           >
             {index + 1}
           </button>

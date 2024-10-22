@@ -8,7 +8,7 @@ const MentorMySlotPage = () => {
 			<MentorHeader />
 			<div className="flex flex-1">
 				<MentorAccountSidebar />
-				<main className="flex-1 mt-16 ml-64 p-4 overflow-y-auto">
+				<main className="flex-1 p-4 overflow-y-auto">
 					<MentorMySlotBody />
 				</main>
 			</div>

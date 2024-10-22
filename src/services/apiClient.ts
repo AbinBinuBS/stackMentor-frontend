@@ -1,6 +1,7 @@
 import axios from "axios";
 import { store } from "../redux/store";
 import { mentorLogin, mentorLogout } from "../redux/mentorSlice";
+import { LOCALHOST_URL } from "../constants/constants";
 
 const apiClient = axios.create({
 	baseURL: "https://999bookstore.online",
@@ -53,7 +54,7 @@ apiClient.interceptors.response.use(
 
 			if (refreshToken) {
 				try {
-					const { data } = await apiClient.post("/auth/refresh-token", {
+					const { data } = await axios.post(`${LOCALHOST_URL}/api/mentor/auth/refresh-token`, {
 						refreshToken,
 					});
 					store.dispatch(

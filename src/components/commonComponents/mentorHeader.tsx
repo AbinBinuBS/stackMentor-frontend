@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { mentorLogout } from "../../redux/mentorSlice"; // Adjust this import as necessary
+import { mentorLogout } from "../../redux/mentorSlice"; 
 import { Menu, Bell } from "lucide-react";
 import { LOCALHOST_URL } from "../../constants/constants";
 import { initializeSocket, onNotificationReceived } from "../../services/socketManager";
 import { RootState } from "../../redux/store";
-import {  setSelectedChatMentor, setMentorNotification, addMentorNotification, clearMentorNotifications } from "../../redux/chatSlice";
-import { INotification } from "../../interfaces/IChatMentorInterface"; // Adjust this import as necessary
+import {  setSelectedChatMentor, setMentorNotification, addMentorNotification, clearMentorNotifications, resetSelectedChatMentor } from "../../redux/chatSlice";
+import { INotification } from "../../interfaces/IChatMentorInterface";
 import { mentorStoreData } from "../../interfaces/ImenteeInferfaces";
 import apiClient from "../../services/apiClient";
 
@@ -29,13 +29,22 @@ const MentorHeader: React.FC = () => {
   const dispatch = useDispatch();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isBell,setIsBell] = useState(true)
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const accessToken = useSelector((state: mentorStoreData) => state.mentor.accessToken);
   const [user, setUser] = useState("");
   const selectedChat = useSelector((state: RootState) => state.chat.selectedChatMentor);
   const notifications = useSelector((state: RootState) => state.chat.mentorNotification) || [];
+  const location = useLocation();
 
   useEffect(() => {
+    if(location.pathname == '/mentor/chat'){
+      setIsBell(false)
+    }else{
+      if(selectedChat){
+        dispatch(resetSelectedChatMentor())
+      }
+    }
     if (accessToken && !user) {
       fetchMentorData();
       fetchNotifications();
@@ -215,6 +224,7 @@ const MentorHeader: React.FC = () => {
                 Logout
               </button>
             </div>
+            {isBell && (
             <div className="relative">
               <button
                 className="text-purple-600 font-semibold"
@@ -245,45 +255,50 @@ const MentorHeader: React.FC = () => {
                 </div>
               )}
             </div>
+            )}
           </nav>
           <div className="md:hidden flex items-center">
-            <div className="relative mr-4">
-              <button
-                className="text-purple-600 font-semibold"
-                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-              >
-                <Bell size={24} />
-                {notifications.length > 0 && (
-                  <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
-                    {notifications.length}
-                  </span>
-                )}
-              </button>
-              {isNotificationOpen && (
-                <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-md w-80">
-                  <div className="max-h-60 overflow-y-auto">
-                    {notifications.length > 0 ? (
-                      renderNotifications()
-                    ) : (
-                      <div className="p-4 text-gray-500 text-sm">No notifications</div>
-                    )}
-                  </div>
-                  <button
-                    onClick={handleClearNotifications}
-                    className="w-full bg-gray-200 hover:bg-gray-300 text-purple-600 font-semibold py-2 rounded-b"
-                  >
-                    Clear Notifications
-                  </button>
-                </div>
-              )}
-            </div>
-            <button
-              className="flex items-center text-purple-600"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Menu size={24} />
-            </button>
+  {isBell && (
+    <div className="relative mr-4">
+      <button
+        className="text-purple-600 font-semibold"
+        onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+      >
+        <Bell size={24} />
+        {notifications.length > 0 && (
+          <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
+            {notifications.length}
+          </span>
+        )}
+      </button>
+      {isNotificationOpen && (
+        <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-md w-80">
+          <div className="max-h-60 overflow-y-auto">
+            {notifications.length > 0 ? (
+              renderNotifications()
+            ) : (
+              <div className="p-4 text-gray-500 text-sm">No notifications</div>
+            )}
           </div>
+          <button
+            onClick={handleClearNotifications}
+            className="w-full bg-gray-200 hover:bg-gray-300 text-purple-600 font-semibold py-2 rounded-b"
+          >
+            Clear Notifications
+          </button>
+        </div>
+      )}
+    </div>
+  )}
+
+  <button
+    className="flex items-center text-purple-600"
+    onClick={() => setIsMenuOpen(!isMenuOpen)}
+  >
+    <Menu size={24} />
+  </button>
+</div>
+
         </div>
       </header>
   

@@ -34,7 +34,6 @@ const MyCommunityBody: React.FC = () => {
       
       if (Array.isArray(data.meetData)) {
         setCommunityMeets(data.meetData);
-        console.log(data);
       } else {
         console.error("Received data is not an array:", data.meetData);
         toast.error("Received invalid data format from the server.");

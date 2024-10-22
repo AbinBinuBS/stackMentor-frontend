@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { menteeLogout } from "../../redux/menteeSlice";
@@ -9,7 +9,7 @@ import apiClientMentee from "../../services/apiClientMentee";
 import { LOCALHOST_URL } from "../../constants/constants";
 import { initializeSocket, onNotificationReceived } from "../../services/socketManager";
 import { RootState } from "../../redux/store";
-import { setNotification, addNotification, clearNotifications, setSelectedChat } from "../../redux/chatSlice";
+import { setNotification, addNotification, clearNotifications, setSelectedChat, resetSelectedChat } from "../../redux/chatSlice";
 import { INotification } from "../../interfaces/IChatMentorInterface";
 
 interface GroupedNotification {
@@ -31,15 +31,25 @@ const MenteeHeader: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isBell,setIsBell] = useState(true)
   const accessToken = useSelector((state: StoreData) => state.mentee.accessToken);
   const [user, setUser] = useState("");
   const selectedChat = useSelector((state: RootState) => state.chat.selectedChat);
   const notifications = useSelector((state: RootState) => state.chat.notification) || [];
-
+  const location = useLocation();
   useEffect(() => {
+    if(location.pathname == '/chat'){
+      setIsBell(false)
+    }else{
+      if(selectedChat){
+        dispatch(resetSelectedChat())
+      }
+    }
     if (accessToken && !user) {
       fetchMenteeData();
       fetchNotifications();
+    }else{
+      setIsBell(false)
     }
   }, [accessToken]);
 
@@ -255,34 +265,38 @@ const MenteeHeader: React.FC = () => {
               )}
             </div>
             <div className="relative">
-              <button
-                className="text-black font-semibold"
-                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-              >
-                <Bell size={24} />
-                {notifications.length > 0 && (
-                  <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {notifications.length}
-                  </span>
-                )}
-              </button>
-              {isNotificationOpen && (
-                <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-md w-80 min-h-[300px]" style={{ right: 'calc(100% + 10px)' }}>
-                  <div className="flex justify-between items-center p-2 border-b">
-                    <h3 className="font-semibold">Notifications</h3>
-                    <button
-                      onClick={handleClearNotifications}
-                      className="text-sm text-blue-500 hover:text-blue-700"
-                    >
-                      Clear All
-                    </button>
-                  </div>
-                  <div className="max-h-[250px] overflow-y-auto">
-                    {renderNotifications()}
-                  </div>
-                </div>
-              )}
-            </div>
+      {isBell && ( 
+        <button
+          className="text-black font-semibold"
+          onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+        >
+          <Bell size={24} />
+          {notifications.length > 0 && (
+            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {notifications.length}
+            </span>
+          )}
+        </button>
+      )}
+
+      {isNotificationOpen && (
+        <div
+          className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-md w-80 min-h-[300px]"
+          style={{ right: 'calc(100% + 10px)' }}
+        >
+          <div className="flex justify-between items-center p-2 border-b">
+            <h3 className="font-semibold">Notifications</h3>
+            <button
+              onClick={handleClearNotifications}
+              className="text-sm text-blue-500 hover:text-blue-700"
+            >
+              Clear All
+            </button>
+          </div>
+          <div className="max-h-[250px] overflow-y-auto">{renderNotifications()}</div>
+        </div>
+      )}
+    </div>
           </nav>
           <button
             className="md:hidden text-black"

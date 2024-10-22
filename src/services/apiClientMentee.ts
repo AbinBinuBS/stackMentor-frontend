@@ -53,7 +53,7 @@ apiClientMentee.interceptors.response.use(
 
 			if (refreshToken) {
 				try {
-					const { data } = await apiClientMentee.post("/auth/refresh-token", {
+					const { data } = await apiClientMentee.post("/api/mentees/auth/refresh-token", {
 						refreshToken,
 					});
 					store.dispatch(
