@@ -175,3 +175,20 @@ export interface AccountBodyProps {
     createdAt: Date;      
     updatedAt: Date;
   }
+
+
+  export interface MenuItem {
+	path: string;
+	label: string;
+	icon?: React.ReactNode;
+  }
+  
+  export interface SidebarProps {
+	isOpen: boolean;
+	setIsOpen: (isOpen: boolean) => void;
+	menuItems: MenuItem[];
+	activeColors: {
+	  bg: string;
+	  text: string;
+	};
+  }

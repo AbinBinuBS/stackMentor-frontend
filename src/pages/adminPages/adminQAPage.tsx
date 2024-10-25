@@ -8,7 +8,7 @@ const AdminQAPage = () => {
 			<AdminHeader />
 			<div className="flex flex-1">
 				<AdminDashboardSidebar />
-				<main className="flex-1 ml-64 mt-36 p-6 overflow-y-auto">
+				<main className="flex-1 ml-6 lg:ml-64 mt-36 p-6 overflow-y-auto">
 					<AdminQABody />
 				</main>
 			</div>

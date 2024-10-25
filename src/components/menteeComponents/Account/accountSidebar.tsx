@@ -1,11 +1,15 @@
-import React from "react";
-import { Menu, X, User, Calendar, Wallet } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { AccountBodyProps } from "../../../interfaces/ImenteeInferfaces";
+import React from 'react';
+import { Menu, X } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { SidebarProps } from '../../../interfaces/ImenteeInferfaces';
 
 
-
-const AccountSidebar: React.FC<AccountBodyProps> = ({ isOpen, setIsOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
+  setIsOpen,
+  menuItems,
+  activeColors
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,7 +40,7 @@ const AccountSidebar: React.FC<AccountBodyProps> = ({ isOpen, setIsOpen }) => {
           lg:hidden
         `}
         onClick={toggleSidebar}
-      ></div>
+      />
 
       <div
         className={`
@@ -48,45 +52,23 @@ const AccountSidebar: React.FC<AccountBodyProps> = ({ isOpen, setIsOpen }) => {
       >
         <nav className="p-4">
           <ul className="space-y-2">
-            <li
-              className={`
-                ${
-                  isActive("/account")
-                    ? "bg-blue-200 text-blue-700 font-semibold"
-                    : ""
-                } py-2 px-4 rounded cursor-pointer flex items-center
-              `}
-              onClick={() => navigate("/account")}
-            >
-              <User size={18} className="mr-2" />
-              Account
-            </li>
-            <li
-              className={`
-                ${
-                  isActive("/MySlot")
-                    ? "bg-blue-200 text-blue-700 font-semibold"
-                    : ""
-                } py-2 px-4 rounded cursor-pointer flex items-center
-              `}
-              onClick={() => navigate("/MySlot")}
-            >
-              <Calendar size={18} className="mr-2" />
-              My Slots
-            </li>
-            <li
-              className={`
-                ${
-                  isActive("/wallet")
-                    ? "bg-blue-200 text-blue-700 font-semibold"
-                    : ""
-                } py-2 px-4 rounded cursor-pointer flex items-center
-              `}
-              onClick={() => navigate("/wallet")}
-            >
-              <Wallet size={18} className="mr-2" />
-              Wallet
-            </li>
+            {menuItems.map((item) => (
+              <li
+                key={item.path}
+                className={`
+                  ${
+                    isActive(item.path)
+                      ? `${activeColors.bg} ${activeColors.text} font-semibold`
+                      : ""
+                  }
+                  py-2 px-4 rounded cursor-pointer flex items-center
+                `}
+                onClick={() => navigate(item.path)}
+              >
+                {item.icon && <span className="mr-2">{item.icon}</span>}
+                {item.label}
+              </li>
+            ))}
           </ul>
         </nav>
       </div>
@@ -94,4 +76,4 @@ const AccountSidebar: React.FC<AccountBodyProps> = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default AccountSidebar;
+export default Sidebar;

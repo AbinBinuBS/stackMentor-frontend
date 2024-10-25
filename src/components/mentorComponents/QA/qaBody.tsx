@@ -20,20 +20,31 @@ const QABody: React.FC = () => {
 	const [editAnswerText, setEditAnswerText] = useState("");
 	const [ismentorAllowed, setIsMentorAllowed] = useState<boolean>();
 	const [loading, setLoading] = useState(true);
+	const [totalPage, setTotalPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(3);
 	const navigate = useNavigate();
 	useEffect(() => {
 		fetchQuestions();
-	}, []);
+	}, [currentPage,activeTab]);
 
 	const fetchQuestions = async () => {
 		try {
 			const { data } = await apiClient.get(
-				`${LOCALHOST_URL}/api/mentor/getAllQuestions`
+				`${LOCALHOST_URL}/api/mentor/getAllQuestions`,
+				{
+                    params: {
+                        isAnswered: activeTab,
+                        page: currentPage,
+                        limit: itemsPerPage
+                    }
+                }
 			);
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 			setLoading(false);
 			setIsMentorAllowed(true);
 			setQuestions(data.questions);
+			setTotalPage(Math.ceil(data.total / itemsPerPage))
 		} catch (error) {
 			if (error instanceof Error) {
 				if (
@@ -92,6 +103,28 @@ const QABody: React.FC = () => {
 		}
 	};
 
+	const handleNextPage = () => {
+        if (currentPage < totalPage) {
+            setCurrentPage(prev => prev + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prev => prev - 1);
+        }
+    };
+
+	const changeToAnswerd = () =>{
+		setActiveTab("unanswered")
+		setCurrentPage(1)
+	}
+
+	const changeToUnAnswerd = () =>{
+		setActiveTab("myAnswers")
+		setCurrentPage(1)
+	}
+
 	const validationSchema = Yup.object({
 		answerText: Yup.string()
 			.min(150, "Answer must be at least 150 characters long")
@@ -146,7 +179,7 @@ const QABody: React.FC = () => {
 							? "bg-purple-600 text-white"
 							: "bg-gray-200"
 					} rounded-md focus:outline-none`}
-					onClick={() => setActiveTab("unanswered")}
+					onClick={changeToAnswerd}
 				>
 					Unanswered
 				</button>
@@ -156,7 +189,7 @@ const QABody: React.FC = () => {
 							? "bg-purple-600 text-white"
 							: "bg-gray-200"
 					} rounded-md focus:outline-none`}
-					onClick={() => setActiveTab("myAnswers")}
+					onClick={changeToUnAnswerd}
 				>
 					My Answers
 				</button>
@@ -332,6 +365,25 @@ const QABody: React.FC = () => {
 					</div>
 				</div>
 			)}
+			{questions.length > 0 && (
+                <div className="flex justify-between items-center mt-4">
+                    <button
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        className={`px-3 py-1 text-xs ${currentPage === 1 ? "bg-gray-300" : "bg-gray-300 hover:bg-gray-400"} rounded-md`}
+                    >
+                        Previous
+                    </button>
+                    <span>Page {currentPage} of {totalPage}</span>
+                    <button
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPage}
+                        className={`px-3 py-1 text-xs ${currentPage === totalPage ? "bg-gray-300" : "bg-gray-300 hover:bg-gray-400"} rounded-md`}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
 		</div>
 	);
 };

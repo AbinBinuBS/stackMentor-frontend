@@ -20,25 +20,50 @@ const CommunityMeetBody = () => {
   const [communityMeets, setCommunityMeets] = useState<ICommunityMeet[]>([]);
   const [expandedMeetId, setExpandedMeetId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedStack, setSelectedStack] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(3);
+  const [totalCount, setTotalCount] = useState(0);
+  const [itemsPerPage] = useState(5);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500); 
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  useEffect(() => {
     fetchMeetData();
-  }, []);
+  }, [currentPage, debouncedSearchTerm, selectedDate, selectedStack]);
 
   const fetchMeetData = async () => {
-    setIsLoading(true);
+    if (!isSearching) {
+      setIsLoading(true);
+    }
+    setIsSearching(false);
+
     try {
+      const queryParams = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString(),
+        search: debouncedSearchTerm,
+        stack: selectedStack,
+        ...(selectedDate && { date: selectedDate.toISOString() }),
+      });
+
       const { data } = await apiClientMentee.get(
-        `${LOCALHOST_URL}/api/mentees/getMeets`
+        `${LOCALHOST_URL}/api/mentees/getMeets?${queryParams}`
       );
+
       if (Array.isArray(data.meetData)) {
         setCommunityMeets(data.meetData);
+        setTotalCount(data.count);
       } else {
         toast.error("Received invalid data format from the server.");
       }
@@ -95,35 +120,41 @@ const CommunityMeetBody = () => {
     navigate(`/community/room/${roomId}`);
   };
 
-  const filteredMeets = communityMeets.filter(
-    (meet) =>
-      (!selectedDate ||
-        new Date(meet.date).toDateString() === selectedDate.toDateString()) &&
-      (!selectedStack || meet.stack === selectedStack) &&
-      (searchTerm === "" ||
-        meet.mentorInfo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        meet.stack.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredMeets.slice(indexOfFirstItem, indexOfLastItem);
-
-  const totalPages = Math.ceil(filteredMeets.length / itemsPerPage);
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      window.scrollTo(0, 0);
+    }
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo(0, 0);
+    }
   };
 
-  const uniqueStacks = Array.from(
-    new Set(communityMeets.map((meet) => meet.stack))
-  );
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsSearching(true);
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
-  if (isLoading) {
+  const handleStackChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedStack(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+    setCurrentPage(1);
+  };
+
+
+
+  if (isLoading && !isSearching && communityMeets.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader className="w-8 h-8 text-[#1D2B6B] animate-spin" />
@@ -135,20 +166,22 @@ const CommunityMeetBody = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-start space-y-6 lg:space-y-0 lg:space-x-6 p-6">
+    <div className="flex flex-col lg:flex-row justify-center items-start space-y-6 lg:space-y-0 lg:space-x-6 p-6">      
       <div className="w-full lg:w-3/4 space-y-6">
-        {currentItems.length === 0 ? (
+        {communityMeets.length === 0 ? (
           <div className="bg-white p-8 rounded-lg shadow-md text-center">
             <CalendarIcon className="mx-auto h-16 w-16 text-[#1D2B6B] mb-4" />
             <h3 className="text-2xl font-semibold text-gray-800 mb-2">
               No Community Meets Available
             </h3>
             <p className="text-gray-600 mb-4">
-              Check back later for upcoming events!
+              {searchTerm 
+                ? "No results found for your search. Try different keywords!"
+                : "Check back later for upcoming events!"}
             </p>
           </div>
         ) : (
-          currentItems.map((meet) => {
+          communityMeets.map((meet) => {
             const meetStatus = isMeetOngoing(
               new Date(meet.date),
               meet.startTime,
@@ -254,6 +287,9 @@ const CommunityMeetBody = () => {
             >
               Previous
             </button>
+            <span className="flex items-center px-4 text-gray-600">
+              Page {currentPage} of {totalPages}
+            </span>
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
@@ -282,11 +318,16 @@ const CommunityMeetBody = () => {
                   type="text"
                   id="search"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearchChange}
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#1D2B6B] focus:border-[#1D2B6B] sm:text-sm"
                   placeholder="Search by mentor or stack"
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                {isSearching && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <Loader className="w-4 h-4 text-[#1D2B6B] animate-spin" />
+                  </div>
+                )}
               </div>
             </div>
             <div>
@@ -296,29 +337,31 @@ const CommunityMeetBody = () => {
               <DatePicker
                 id="date"
                 selected={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
+                onChange={handleDateChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#1D2B6B] focus:border-[#1D2B6B] sm:text-sm"
                 placeholderText="Pick a date"
               />
             </div>
             <div>
-              <label htmlFor="stack" className="block text-sm font-medium text-gray-700 mb-1">
-                Select Tech Stack:
-              </label>
-              <select
-                id="stack"
-                value={selectedStack}
-                onChange={(e) => setSelectedStack(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#1D2B6B] focus:border-[#1D2B6B] sm:text-sm"
-              >
-                <option value="">All</option>
-                {uniqueStacks.map((stack) => (
-                  <option key={stack} value={stack}>
-                    {stack}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <label htmlFor="stack" className="block text-sm font-medium text-gray-700 mb-1">
+              Select Tech Stack:
+            </label>
+            <select
+              id="stack"
+              value={selectedStack}
+              onChange={handleStackChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#1D2B6B] focus:border-[#1D2B6B] sm:text-sm"
+            >
+              <option value="">All</option>
+              <option value="mern">MERN</option>
+              <option value="python">Python</option>
+              <option value="data science">Data Science</option>
+              <option value="cybersecurity">Cybersecurity</option>
+              <option value="devops">DevOps</option> 
+              <option value="artificial intelligence">Artificial Intelligence</option> 
+            </select>
+          </div>
+
           </div>
         </div>
       </div>

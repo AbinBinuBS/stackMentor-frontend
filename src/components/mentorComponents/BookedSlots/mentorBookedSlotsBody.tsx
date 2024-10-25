@@ -13,6 +13,7 @@ const MentorBookedSlotsBody: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [slotsPerPage] = useState<number>(5);
   const [isMentorAllowed, setIsMentorAllowed] = useState<boolean>(false);
+  const [totalSlots,setTotalSlots] = useState(1)
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,9 +21,12 @@ const MentorBookedSlotsBody: React.FC = () => {
   useEffect(() => {
     const getBookedSlots = async () => {
       try {
-        const response = await apiClient.get(`${LOCALHOST_URL}/api/mentor/getBookedSlots`);
+        const response = await apiClient.get(
+          `${LOCALHOST_URL}/api/mentor/getBookedSlots?page=${currentPage}&limit=${slotsPerPage}`
+        );
         await new Promise(resolve => setTimeout(resolve, 1000));
-        setBookedSlots(response.data.Slots);
+        setBookedSlots(response.data.slots); 
+        setTotalSlots(response.data.totalCount); 
         setIsMentorAllowed(true);
       } catch (error) {
         if (error instanceof Error) {
@@ -38,9 +42,10 @@ const MentorBookedSlotsBody: React.FC = () => {
         setLoading(false);
       }
     };
-
+  
     getBookedSlots();
-  }, []);
+  }, [currentPage, slotsPerPage]);
+  
 
   const handleChat = async (slot: ISlotMentor) => {
     try {
@@ -115,9 +120,7 @@ const MentorBookedSlotsBody: React.FC = () => {
     }
   };
 
-  const indexOfLastSlot = currentPage * slotsPerPage;
-  const indexOfFirstSlot = indexOfLastSlot - slotsPerPage;
-  const currentSlots = bookedSlots.slice(indexOfFirstSlot, indexOfLastSlot);
+  
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -164,15 +167,14 @@ const MentorBookedSlotsBody: React.FC = () => {
   
   
 
-  const totalPages = Math.ceil(bookedSlots.length / slotsPerPage);
+  const totalPages = Math.ceil(totalSlots / slotsPerPage);
 
   return (
     <div className="w-full max-w-4xl mx-auto xl:ml-96 bg-white shadow-lg rounded-lg p-4">
       <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Booked Slots</h1>
       
-      {/* Mobile view - Card layout */}
       <div className="md:hidden space-y-4">
-        {currentSlots?.map((slot) => (
+        {bookedSlots?.map((slot) => (
           <div key={slot._id.toString()} className="border rounded-lg p-4 space-y-2">
             <div className="flex justify-between">
               <span className="font-medium">Date:</span>
@@ -225,7 +227,6 @@ const MentorBookedSlotsBody: React.FC = () => {
         ))}
       </div>
 
-      {/* Desktop view - Table layout */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -237,7 +238,7 @@ const MentorBookedSlotsBody: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {currentSlots?.map((slot) => (
+            {bookedSlots?.map((slot) => (
               <tr key={slot._id.toString()}>
                 <td className="py-2 px-4 border-b">
                   {new Date(slot.date).toLocaleDateString()}
@@ -285,20 +286,36 @@ const MentorBookedSlotsBody: React.FC = () => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-4 flex-wrap">
+      <div className="flex justify-center mt-6 gap-2 flex-wrap">
+        <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-gray-700 disabled:opacity-50"
+        >
+            Previous
+        </button>
         {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => paginate(index + 1)}
-            className={`py-1 px-3 m-1 rounded text-sm md:text-base ${
-              index + 1 === currentPage ? 'bg-purple-700 text-white' : 'bg-gray-200'
-            }`}
-          >
-            {index + 1}
-          </button>
+            <button
+                key={index}
+                onClick={() => paginate(index + 1)}
+                className={`py-1 px-3 m-1 rounded text-sm md:text-base ${
+                    index + 1 === currentPage
+                        ? 'bg-purple-700 text-white'
+                        : 'bg-gray-200'
+                }`}
+            >
+                {index + 1}
+            </button>
         ))}
-      </div>
+        <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-gray-700 disabled:opacity-50"
+        >
+            Next
+        </button>
+    </div>
+
     </div>
   );
 };

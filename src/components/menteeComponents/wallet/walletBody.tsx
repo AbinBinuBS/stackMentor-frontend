@@ -10,7 +10,7 @@ interface WalletHistory {
   date: string;
   description: string;
   amount: number;
-  transactionType:string;
+  transactionType: string;
   balanceAfterTransaction: number; 
 }
 
@@ -19,14 +19,21 @@ const WalletBody = () => {
   const [walletHistory, setWalletHistory] = useState<WalletHistory[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showHistory, setShowHistory] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
   const recordsPerPage = 5;
 
-  const fetchWalletData = async () => {
+  const fetchWalletData = async (page: number) => {
     try {
-      const response = await apiClientMentee.get(`${LOCALHOST_URL}/api/mentees/getWalletData`);
-      if (response.data && response.data.walletData) {
-        setUserData(response.data.walletData);
-        setWalletHistory(response.data.walletData.walletHistory); 
+      const response = await apiClientMentee.get(`${LOCALHOST_URL}/api/mentees/getWalletData`, {
+        params: {
+          page: page,
+          limit: recordsPerPage
+        },
+      });
+      if (response.data) {
+        setUserData(response.data.walletData.mentee);
+        setWalletHistory(response.data.walletData.mentee.walletHistory);
+        setTotalPages(Math.ceil(response.data.walletData.total / recordsPerPage));
       }
     } catch (error) {
       console.error("Error fetching wallet data:", error);
@@ -34,16 +41,20 @@ const WalletBody = () => {
   };
 
   useEffect(() => {
-    fetchWalletData();
-  }, []);
+    fetchWalletData(currentPage);
+  }, [currentPage, showHistory]);
 
-  const lastIndex = currentPage * recordsPerPage;
-  const firstIndex = lastIndex - recordsPerPage;
-  const currentRecords = walletHistory.slice(firstIndex, lastIndex);
-  const totalPages = Math.ceil(walletHistory.length / recordsPerPage);
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
 
-  const goToNextPage = () => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-  const goToPreviousPage = () => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
@@ -82,7 +93,12 @@ const WalletBody = () => {
 
       <div className="px-6 py-4">
         <button
-          onClick={() => setShowHistory(!showHistory)}
+          onClick={() => {
+            setShowHistory(!showHistory);
+            if (!showHistory) {
+              fetchWalletData(1);
+            }
+          }}
           className="px-4 py-2 bg-[#142057] text-white rounded-md hover:bg-[#2A3F7E] transition"
         >
           {showHistory ? "Hide Wallet History" : "Show Wallet History"}
@@ -92,76 +108,85 @@ const WalletBody = () => {
       {showHistory && (
         <div className="bg-gray-100 mt-4 p-6 rounded-lg">
           <h2 className="text-xl font-semibold mb-4 text-[#142057]">Wallet History</h2>
-          <table className="min-w-full bg-white border border-gray-300 mb-4">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-2 px-4 border-b text-center">No.</th>
-                <th className="py-2 px-4 border-b text-center">Amount</th>
-                <th className="py-2 px-4 border-b text-center">Description</th>
-                <th className="py-2 px-4 border-b text-center">Date</th>
-                <th className="py-2 px-4 border-b text-center">Balance</th> 
-              </tr>
-            </thead>
-            <tbody>
-              {currentRecords.map((history, index) => (
-                <tr key={history.id}>
-                  <td className="py-2 px-4 border-b text-center">
-                    {firstIndex + index + 1}
-                  </td>
-                  <td
-                    className={`py-2 px-4 border-b text-center font-semibold ${
-                      history.amount > 0 ? "text-green-500" : "text-red-500"
+          {walletHistory.length > 0 ? (
+            <>
+              <table className="min-w-full bg-white border border-gray-300 mb-4">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="py-2 px-4 border-b text-center">No.</th>
+                    <th className="py-2 px-4 border-b text-center">Amount</th>
+                    <th className="py-2 px-4 border-b text-center">Description</th>
+                    <th className="py-2 px-4 border-b text-center">Date</th>
+                    <th className="py-2 px-4 border-b text-center">Balance</th> 
+                  </tr>
+                </thead>
+                <tbody>
+                  {walletHistory.map((history, index) => (
+                    <tr key={history.id}>
+                      <td className="py-2 px-4 border-b text-center">
+                        {((currentPage - 1) * recordsPerPage) + index + 1}
+                      </td>
+                      <td
+                        className={`py-2 px-4 border-b text-center font-semibold ${
+                          history.amount > 0 ? "text-green-500" : "text-red-500"
+                        }`}
+                      >
+                        {history.amount > 0
+                          ? `+₹${history.amount}`
+                          : `-₹${Math.abs(history.amount)}`}
+                      </td>
+                      <td className="py-2 px-4 border-b text-center">
+                        {history.description}
+                      </td>
+                      <td className="py-2 px-4 border-b text-center">
+                        {dayjs(history.date).format('YYYY-MM-DD HH:mm:ss')}
+                      </td>
+                      <td className={`py-2 px-4 border-b text-center font-semibold ${
+                          history.transactionType === 'credit' ? "text-green-500" : "text-red-500"
+                        }`}
+                      >
+                        ₹{history.balanceAfterTransaction}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {totalPages > 1 && (
+                <div className="flex justify-between items-center mt-4">
+                  <button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className={`px-4 py-2 rounded-md ${
+                      currentPage === 1
+                        ? "bg-gray-200 text-gray-500"
+                        : "bg-[#142057] text-white hover:bg-[#2A3F7E]"
                     }`}
                   >
-                    {history.amount > 0
-                      ? `+₹${history.amount}`
-                      : `-₹${Math.abs(history.amount)}`}
-                  </td>
-                  <td className="py-2 px-4 border-b text-center">
-                    {history.description}
-                  </td>
-                  <td className="py-2 px-4 border-b text-center">
-                    {dayjs(history.date).format('YYYY-MM-DD HH:mm:ss')}
-                  </td>
-                  <td className={`py-2 px-4 border-b text-center font-semibold ${
-                      history.transactionType == 'credit'? "text-green-500" : "text-red-500"
+                    Previous
+                  </button>
+                  <span className="text-sm">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-4 py-2 rounded-md ${
+                      currentPage === totalPages
+                        ? "bg-gray-200 text-gray-500"
+                        : "bg-[#142057] text-white hover:bg-[#2A3F7E]"
                     }`}
                   >
-                    ₹{history.balanceAfterTransaction}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-
-          <div className="flex justify-between items-center mt-4">
-            <button
-              onClick={goToPreviousPage}
-              disabled={currentPage === 1}
-              className={`px-4 py-2 rounded-md ${
-                currentPage === 1
-                  ? "bg-gray-200 text-gray-500"
-                  : "bg-[#142057] text-white hover:bg-[#2A3F7E]"
-              }`}
-            >
-              Previous
-            </button>
-            <span className="text-sm">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-              className={`px-4 py-2 rounded-md ${
-                currentPage === totalPages
-                  ? "bg-gray-200 text-gray-500"
-                  : "bg-[#142057] text-white hover:bg-[#2A3F7E]"
-              }`}
-            >
-              Next
-            </button>
-          </div>
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              No wallet history available
+            </div>
+          )}
         </div>
       )}
     </div>

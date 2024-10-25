@@ -45,25 +45,25 @@ const MenteeHomeBody: React.FC = () => {
 
 				<div className="flex flex-col lg:flex-row items-center justify-around w-full h-auto my-16 p-6 lg:p-12">
 					<a
-						href="/find-mentor"
+						href="/mentorList"
 						className="w-full lg:w-80 h-44 bg-teal-100 flex items-center justify-center rounded-lg shadow-md mb-4 lg:mb-0"
 					>
 						<i className="fa-solid fa-user-tie text-4xl mx-4 text-teal-800"></i>
 						<h2 className="text-xl text-teal-900">Find a Mentor</h2>
 					</a>
 					<a
-						href="/skill-development"
+						href="/communityMeet"
 						className="w-full lg:w-80 h-44 bg-teal-100 flex items-center justify-center rounded-lg shadow-md mb-4 lg:mb-0"
 					>
 						<i className="fa-solid fa-laptop-code text-4xl mx-4 text-teal-800"></i>
-						<h2 className="text-xl text-teal-900">Skill Development</h2>
+						<h2 className="text-xl text-teal-900">Community Meet</h2>
 					</a>
 					<a
-						href="/career-guidance"
+						href="/questionsAsked"
 						className="w-full lg:w-80 h-44 bg-teal-100 flex items-center justify-center rounded-lg shadow-md"
 					>
 						<i className="fa-solid fa-briefcase text-4xl mx-4 text-teal-800"></i>
-						<h2 className="text-xl text-teal-900">Career Guidance</h2>
+						<h2 className="text-xl text-teal-900">Career Doubts</h2>
 					</a>
 				</div>
 

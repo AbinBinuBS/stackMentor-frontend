@@ -8,7 +8,7 @@ const AdminUserListPage = () => {
 			<AdminHeader />
 			<div className="flex mt-16 flex-1 ">
 				<AdminDashboardSidebar />
-				<main className="flex-1 ml-64 mt-16 overflow-y-auto lg:ml-80 xl:ml-96">
+				<main className="flex-1 ml-8 mt-16 overflow-y-auto lg:ml-80 xl:ml-96">
 					<AdminUserListBody />
 				</main>
 			</div>

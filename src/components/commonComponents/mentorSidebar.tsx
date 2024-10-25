@@ -1,6 +1,6 @@
 const MentorSidebar = () => {
 	return (
-		<div className="flex items-center justify-end h-screen w-2/5 bg-purple-300">
+		<div className="hidden lg:flex items-center justify-end lg:h-screen lg:w-2/5 bg-purple-300">
 			<div className="relative flex flex-col items-center justify-center bg-purple-300 w-4/5 h-4/5 shadow-2xl rounded-lg p-6">
 				<div className="relative">
 					<img

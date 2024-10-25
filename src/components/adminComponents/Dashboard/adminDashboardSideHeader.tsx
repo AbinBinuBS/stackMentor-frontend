@@ -155,7 +155,7 @@ const AdminHeaderSideHeader: React.FC = () => {
 	};
 
 	return (
-		<div className="flex-1 bg-gray-100 p-6 ml-56 mt-24 mr-36 rounded-lg shadow-md overflow-hidden">
+<div className="flex-1 bg-gray-100 p-6 lg:ml-56 mt-24 lg:mr-36 mr-16 rounded-lg shadow-md overflow-hidden">
 			<h2 className="text-xl font-semibold mb-4">Dashboard Overview</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
 				<div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center">

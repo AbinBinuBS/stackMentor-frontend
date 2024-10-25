@@ -4,8 +4,25 @@ import apiClient from '../../../services/apiClient';
 import { toast } from 'react-hot-toast';
 import { CalendarIcon, Star, Users } from 'lucide-react';
 
+// Define types
 type RatingValue = 1 | 2 | 3 | 4 | 5;
 type RatingCounts = Record<RatingValue, number>;
+
+interface Rating {
+  _id: string;
+  mentee: { name: string };
+  ratingValue: RatingValue;
+  comment: string;
+  createdAt: string;
+}
+
+interface RatingResponse {
+  message: string;
+  ratings: Rating[];
+  totalPages: number;
+  totalCount: number;
+  ratingCounts: RatingCounts;
+}
 
 const NoDataMessage: React.FC = () => (
   <div className="bg-white p-6 rounded-lg mt-36 shadow-md text-center max-w-sm mx-auto">
@@ -16,17 +33,26 @@ const NoDataMessage: React.FC = () => (
 );
 
 const MentorRatingBody: React.FC = () => {
-  const [ratings, setRatings] = useState<any[]>([]);
+  const [ratings, setRatings] = useState<Rating[]>([]); 
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [ratingsPerPage] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+  const [ratingCounts, setRatingCounts] = useState<RatingCounts>({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
+  const [totalCount, setTotalCount] = useState<number>(0);
+
+  const ratingsPerPage = 4;
 
   useEffect(() => {
     const getRatings = async () => {
       try {
-        const response = await apiClient.get(`${LOCALHOST_URL}/api/mentor/getRatings`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const response = await apiClient.get<RatingResponse>(
+          `${LOCALHOST_URL}/api/mentor/getRatings?page=${currentPage}&limit=${ratingsPerPage}`
+        );
+
         setRatings(response.data.ratings);
+        setTotalPages(response.data.totalPages);
+        setRatingCounts(response.data.ratingCounts);
+        setTotalCount(response.data.totalCount);
       } catch (error) {
         toast.error("Unable to fetch ratings.");
       } finally {
@@ -35,29 +61,16 @@ const MentorRatingBody: React.FC = () => {
     };
 
     getRatings();
-  }, []);
-
-  const indexOfLastRating = currentPage * ratingsPerPage;
-  const indexOfFirstRating = indexOfLastRating - ratingsPerPage;
-  const currentRatings = ratings.slice(indexOfFirstRating, indexOfLastRating);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-  const getRatingCounts = (): RatingCounts => {
-    const counts: RatingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    ratings.forEach(rating => {
-      const ratingValue = rating.ratingValue as RatingValue;
-      counts[ratingValue]++;
-    });
-    return counts;
-  };
-
-  const ratingCounts = getRatingCounts();
+  }, [currentPage]);
 
   const calculateOverallRating = (): number => {
-    if (ratings.length === 0) return 0;
-    const sum = ratings.reduce((acc, rating) => acc + rating.ratingValue, 0);
-    return Number((sum / ratings.length).toFixed(1));
+    if (totalCount === 0) return 0;
+    
+    const totalStars = Object.entries(ratingCounts).reduce((acc, [rating, count]) => {
+      return acc + (Number(rating) * count);
+    }, 0);
+    
+    return Number((totalStars / totalCount).toFixed(1));
   };
 
   const overallRating = calculateOverallRating();
@@ -73,8 +86,6 @@ const MentorRatingBody: React.FC = () => {
   if (!ratings.length) {
     return <NoDataMessage />;
   }
-
-  const totalPages = Math.ceil(ratings.length / ratingsPerPage);
 
   return (
     <div className="w-full max-w-4xl ml-auto mr-36 bg-white shadow-lg rounded-lg p-6 mt-12">
@@ -112,7 +123,7 @@ const MentorRatingBody: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {currentRatings.map((rating) => (
+            {ratings.map((rating) => (
               <tr key={rating._id.toString()} className="hover:bg-purple-50 transition-colors duration-200">
                 <td className="py-2 px-3 text-sm border-b">{rating.mentee.name}</td>
                 <td className="py-2 px-3 text-sm border-b">
@@ -135,13 +146,13 @@ const MentorRatingBody: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-center mt-4">
         <div className="text-sm text-gray-600 mb-2 sm:mb-0">
           <Users className="inline mr-1" size={16} />
-          Total Reviews: {ratings.length}
+          Total Reviews: {totalCount}
         </div>
         <div className="flex flex-wrap justify-center">
           {Array.from({ length: totalPages }, (_, index) => (
             <button
               key={index}
-              onClick={() => paginate(index + 1)}
+              onClick={() => setCurrentPage(index + 1)}
               className={`py-1 px-2 m-1 rounded text-xs font-medium transition-colors duration-200 ${
                 index + 1 === currentPage 
                   ? 'bg-purple-700 text-white' 
