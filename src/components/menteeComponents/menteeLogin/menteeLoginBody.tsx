@@ -60,7 +60,7 @@ const MenteeLoginBody = () => {
 		});
 
 	const handleGoogleAuthentication = () => {
-		window.location.href = "https://999bookstore.online/auth";
+		window.location.href = "https://stackmentor.shop/auth";
 	};
 
 	const togglePasswordVisibility = () => {
